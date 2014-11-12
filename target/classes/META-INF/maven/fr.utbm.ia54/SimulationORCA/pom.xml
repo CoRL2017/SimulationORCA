@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>fr.utbm.ia54</groupId>
+  <artifactId>SimulationORCA</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>simulation.orca</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  	<sarl.version>0.1.0</sarl.version>
+    <janus.version>2.0.1.0</janus.version>
+  </properties>
+  <build>
+	  <plugins>
+	         <plugin>
+	            <groupId>io.sarl.maven</groupId>
+	            <artifactId>sarl-maven-plugin</artifactId>
+	            <version>${sarl.version}</version>
+	            <extensions>true</extensions>
+	            <configuration>
+	               <source>1.7</source>
+	               <target>1.7</target>
+	               <encoding>UTF-8</encoding>
+	            </configuration>
+	         </plugin>
+	  </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.janusproject</groupId>
+      <artifactId>io.janusproject.kernel</artifactId>
+      <version>${janus.version}</version>
+    </dependency>
+    <dependency>
+       <groupId>io.sarl.maven</groupId>
+       <artifactId>io.sarl.maven.sdk</artifactId>
+       <version>${sarl.version}</version>
+       <type>pom</type>
+       <exclusions>
+          <exclusion>
+             <groupId>com.google.guava</groupId>
+             <artifactId>guava</artifactId>
+          </exclusion>
+       </exclusions>
+    </dependency>
+  </dependencies>
+</project>
+
