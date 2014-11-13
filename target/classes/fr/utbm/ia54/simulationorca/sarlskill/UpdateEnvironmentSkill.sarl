@@ -1,0 +1,9 @@
+package fr.utbm.ia54.simulationorca.sarlskill
+
+import fr.utbm.ia54.simulationorca.sarlcapacity.UpdateEnvironmentCapacity
+
+skill UpdateEnvironmentSkill implements UpdateEnvironmentCapacity {
+	def blabla {
+		// TODO: Auto-generated action.
+	}
+}

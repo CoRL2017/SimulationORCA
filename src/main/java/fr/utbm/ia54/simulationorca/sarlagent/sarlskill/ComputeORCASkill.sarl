@@ -1,5 +1,0 @@
-package fr.utbm.ia54.simulationorca.sarlagent.sarlskill
-
-skill ComputeORCASkill implements ComputeNextMoveCapacity {
-	
-}

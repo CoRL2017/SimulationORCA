@@ -1,0 +1,9 @@
+package fr.utbm.ia54.simulationorca.sarlskill
+
+import fr.utbm.ia54.simulationorca.sarlcapacity.ResolveConflictCapacity
+
+skill ResolveConflictSkill implements ResolveConflictCapacity {
+	def aFunction {
+		// TODO: Auto-generated action.
+	}
+}

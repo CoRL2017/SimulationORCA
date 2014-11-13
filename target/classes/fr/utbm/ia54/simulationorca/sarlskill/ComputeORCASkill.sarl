@@ -1,0 +1,9 @@
+package fr.utbm.ia54.simulationorca.sarlskill
+
+import fr.utbm.ia54.simulationorca.sarlcapacity.ComputeNextMoveCapacity
+
+skill ComputeORCASkill implements ComputeNextMoveCapacity {
+	def aFunction {
+		// TODO: Auto-generated action.
+	}
+}
