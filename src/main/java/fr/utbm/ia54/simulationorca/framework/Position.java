@@ -2,28 +2,28 @@ package fr.utbm.ia54.simulationorca.framework;
 
 public class Position {
 
-	private int xPos;
-	private int yPos;
+	private int x;
+	private int y;
 	
 	public Position(int xPos, int yPos){
-		this.xPos = xPos;
-		this.yPos = yPos;
+		this.x = xPos;
+		this.y = yPos;
 	}
 	
 	public Position(){
 	}
 	
-	public int getXPos() {
-		return xPos;
+	public int getX() {
+		return x;
 	}
-	public void setXPos(int xPos) {
-		this.xPos = xPos;
+	public void setX(int xPos) {
+		this.x = xPos;
 	}
-	public int getYPos() {
-		return yPos;
+	public int getY() {
+		return y;
 	}
-	public void setYPos(int yPos) {
-		this.yPos = yPos;
+	public void setY(int yPos) {
+		this.y = yPos;
 	}
 	
 }
