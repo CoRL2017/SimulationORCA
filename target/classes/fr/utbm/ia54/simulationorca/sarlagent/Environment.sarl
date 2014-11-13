@@ -1,4 +1,4 @@
-package fr.utbm.ia54.simulationorca.agent
+package fr.utbm.ia54.simulationorca.sarlagent
 
 import io.sarl.core.Behaviors
 import io.sarl.core.DefaultContextInteractions
@@ -9,7 +9,6 @@ import io.sarl.core.Schedules
 
 agent Environment{
 	
-	uses Lifecycle, Schedules, DefaultContextInteractions, ExternalContextAccess, Behaviors
 	
 	on Initialize{
 	}

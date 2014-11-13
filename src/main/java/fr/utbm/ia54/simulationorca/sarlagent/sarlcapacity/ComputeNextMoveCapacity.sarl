@@ -1,0 +1,7 @@
+package fr.utbm.ia54.simulationorca.sarlagent.sarlcapacity
+
+capacity ComputeNextMoveCapacity {
+	
+	def aFunction
+	
+}
