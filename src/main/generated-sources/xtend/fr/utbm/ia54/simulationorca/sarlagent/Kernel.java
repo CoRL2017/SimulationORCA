@@ -1,7 +1,8 @@
 package fr.utbm.ia54.simulationorca.sarlagent;
 
-import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody;
 import fr.utbm.ia54.simulationorca.framework.Position;
+import fr.utbm.ia54.simulationorca.sarlagent.Environment;
+import fr.utbm.ia54.simulationorca.sarlagent.Pedestrian;
 import io.sarl.core.Initialize;
 import io.sarl.lang.annotation.Generated;
 import io.sarl.lang.core.Address;
@@ -12,17 +13,19 @@ import io.sarl.lang.core.EventSpace;
 import io.sarl.lang.core.Percept;
 import io.sarl.lang.core.Scope;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 
 @SuppressWarnings("all")
-public class Environment extends Agent {
+public class Kernel extends Agent {
   /**
    * Construct an agent.
    * @param parentID - identifier of the parent. It is the identifier of the parent agent and the enclosing contect, at the same time.
    */
   @Generated
-  public Environment(final UUID parentID) {
+  public Kernel(final UUID parentID) {
     super(parentID, null);
   }
   
@@ -32,7 +35,7 @@ public class Environment extends Agent {
    * @param agentID - identifier of the agent. If <code>null</code> the agent identifier will be computed randomly.
    */
   @Generated
-  public Environment(final UUID parentID, final UUID agentID) {
+  public Kernel(final UUID parentID, final UUID agentID) {
     super(parentID, agentID);
   }
   
@@ -86,21 +89,32 @@ public class Environment extends Agent {
     return getSkill(io.sarl.core.Lifecycle.class).spawnInContextWithID(agentClass, agentID, context, params);
   }
   
-  protected List<AgentBody> listAgentBodies = new ArrayList<AgentBody>();
-  
   @Percept
   public void _handle_Initialize_1(final Initialize occurrence) {
-    Object _get = occurrence.parameters[0];
-    Object _get_1 = occurrence.parameters[1];
-    this.spawnPedestrianBodies(((List<Address>) _get), ((List<Position>) _get_1));
+    List<Position> listPositionInitPedestrian = new ArrayList<Position>();
+    List<Position> listPositionFinalPedestrian = new ArrayList<Position>();
+    Position _position = new Position(1, 1);
+    listPositionInitPedestrian.add(_position);
+    Position _position_1 = new Position(5, 5);
+    listPositionFinalPedestrian.add(_position_1);
+    List<Address> listPedestrianAddresses = this.spawnPedestrians(listPositionInitPedestrian, listPositionFinalPedestrian);
+    this.spawn(Environment.class, new Object[] { listPedestrianAddresses, listPositionInitPedestrian });
+    this.killMe();
   }
   
-  public void spawnPedestrianBodies(final List<Address> listPedestrianAdresses, final List<Position> listInitialPositions) {
-    for (int i = 0; (i < listPedestrianAdresses.size()); i++) {
-      Address _get = listPedestrianAdresses.get(i);
-      Position _get_1 = listInitialPositions.get(i);
-      AgentBody _agentBody = new AgentBody(_get, _get_1);
-      this.listAgentBodies.add(_agentBody);
+  public List<Address> spawnPedestrians(final List<Position> listInitialPedestrianPositions, final List<Position> listFinalPedestrianPositions) {
+    List<Address> listPedestrianAddresses = new ArrayList<Address>();
+    for (int i = 0; (i < listInitialPedestrianPositions.size()); i++) {
+      {
+        Position _get = listInitialPedestrianPositions.get(i);
+        Position _get_1 = listFinalPedestrianPositions.get(i);
+        List<Position> params = Collections.<Position>unmodifiableList(CollectionLiterals.<Position>newArrayList(_get, _get_1));
+        UUID id = this.spawn(Pedestrian.class, params);
+        EventSpace _defaultSpace = this.getDefaultSpace();
+        Address _address = _defaultSpace.getAddress(id);
+        listPedestrianAddresses.add(_address);
+      }
     }
+    return listPedestrianAddresses;
   }
 }
