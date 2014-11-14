@@ -1,0 +1,12 @@
+<environment>
+	<obstacles>
+		<obstacle>1,50,40,40</obstacle>
+		<obstacle>2,50,40,40</obstacle>
+		<obstacle>3,50,40,40</obstacle>
+		<obstacle>4,50,40,40</obstacle>
+	</obstacles>
+	<pedestrians>
+		<pedestrian>10,10,100,100</pedestrian>
+		<pedestrian>5,5,200,200</pedestrian>
+	</pedestrians>
+</environment>
