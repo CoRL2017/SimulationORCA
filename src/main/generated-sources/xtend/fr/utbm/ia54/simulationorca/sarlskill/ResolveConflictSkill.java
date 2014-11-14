@@ -7,7 +7,7 @@ import io.sarl.lang.core.Skill;
 
 @SuppressWarnings("all")
 public class ResolveConflictSkill extends Skill implements ResolveConflictCapacity {
-  public void aFunction() {
+  public void resolveConflict() {
   }
   
   /**

@@ -1,9 +1,13 @@
 package fr.utbm.ia54.simulationorca.sarlskill
 
 import fr.utbm.ia54.simulationorca.sarlcapacity.ComputeNextMoveCapacity
+import fr.utbm.ia54.simulationorca.framework.Position
+import java.util.List
+import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle
 
 skill ComputeORCASkill implements ComputeNextMoveCapacity {
-	def aFunction {
-		// TODO: Auto-generated action.
+	def nextMove (listObstacles : List<Obstacle>,bodyPos: Position,listNeighbours : List<Position> ): Position {
+		var newPos : Position = new Position(3,3)
+		return newPos
 	}
 }

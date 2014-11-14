@@ -3,10 +3,15 @@ package fr.utbm.ia54.simulationorca.sarlagent;
 import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody;
 import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle;
 import fr.utbm.ia54.simulationorca.framework.Position;
+import fr.utbm.ia54.simulationorca.sarlcapacity.ComputePerceptionCapacity;
+import fr.utbm.ia54.simulationorca.sarlcapacity.ResolveConflictCapacity;
 import fr.utbm.ia54.simulationorca.sarlevent.EndOfStepEvent;
 import fr.utbm.ia54.simulationorca.sarlevent.InfuenceReceivedEvent;
 import fr.utbm.ia54.simulationorca.sarlevent.PerceptionReceivedEvent;
 import fr.utbm.ia54.simulationorca.sarlevent.SimulationStepEvent;
+import fr.utbm.ia54.simulationorca.sarlskill.ComputePerceptionSkill;
+import fr.utbm.ia54.simulationorca.sarlskill.ResolveConflictSkill;
+import io.sarl.core.AgentTask;
 import io.sarl.core.Initialize;
 import io.sarl.lang.annotation.Generated;
 import io.sarl.lang.core.Address;
@@ -23,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.eclipse.xtext.xbase.lib.InputOutput;
+import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 @SuppressWarnings("all")
 public class Environment extends Agent {
@@ -115,15 +121,72 @@ public class Environment extends Agent {
     getSkill(io.sarl.core.Behaviors.class).wake(evt);
   }
   
+  @Generated
+  protected List<Position> computePerception(final Position bodyPos, final List<AgentBody> listAgentBodies) {
+    return getSkill(fr.utbm.ia54.simulationorca.sarlcapacity.ComputePerceptionCapacity.class).computePerception(bodyPos, listAgentBodies);
+  }
+  
+  @Generated
+  protected void resolveConflict() {
+    getSkill(fr.utbm.ia54.simulationorca.sarlcapacity.ResolveConflictCapacity.class).resolveConflict();
+  }
+  
+  @Generated
+  protected boolean cancel(final AgentTask task) {
+    return getSkill(io.sarl.core.Schedules.class).cancel(task);
+  }
+  
+  @Generated
+  protected boolean cancel(final AgentTask task, final boolean mayInterruptIfRunning) {
+    return getSkill(io.sarl.core.Schedules.class).cancel(task, mayInterruptIfRunning);
+  }
+  
+  @Generated
+  protected AgentTask every(final long period, final Procedure1<? super Agent> procedure) {
+    return getSkill(io.sarl.core.Schedules.class).every(period, procedure);
+  }
+  
+  @Generated
+  protected AgentTask every(final AgentTask task, final long period, final Procedure1<? super Agent> procedure) {
+    return getSkill(io.sarl.core.Schedules.class).every(task, period, procedure);
+  }
+  
+  @Generated
+  protected AgentTask in(final long delay, final Procedure1<? super Agent> procedure) {
+    return getSkill(io.sarl.core.Schedules.class).in(delay, procedure);
+  }
+  
+  @Generated
+  protected AgentTask in(final AgentTask task, final long delay, final Procedure1<? super Agent> procedure) {
+    return getSkill(io.sarl.core.Schedules.class).in(task, delay, procedure);
+  }
+  
+  @Generated
+  protected AgentTask task(final String name) {
+    return getSkill(io.sarl.core.Schedules.class).task(name);
+  }
+  
   protected List<AgentBody> listAgentBodies = new ArrayList<AgentBody>();
   
   protected List<Obstacle> listObstacles = new ArrayList<Obstacle>();
   
   @Percept
   public void _handle_Initialize_1(final Initialize occurrence) {
+    InputOutput.<String>println("in Initialize");
     Object _get = occurrence.parameters[0];
     Object _get_1 = occurrence.parameters[1];
     this.spawnPedestrianBodies(((List<Address>) _get), ((List<Position>) _get_1));
+    ComputePerceptionSkill skillCompute = new ComputePerceptionSkill();
+    this.<ComputePerceptionSkill>setSkill(ComputePerceptionCapacity.class, skillCompute);
+    ResolveConflictSkill skillResolve = new ResolveConflictSkill();
+    this.<ResolveConflictSkill>setSkill(ResolveConflictCapacity.class, skillResolve);
+    final Procedure1<Agent> _function = new Procedure1<Agent>() {
+      public void apply(final Agent it) {
+        EndOfStepEvent _endOfStepEvent = new EndOfStepEvent();
+        Environment.this.wake(_endOfStepEvent);
+      }
+    };
+    this.every(5000, _function);
     SimulationStepEvent _simulationStepEvent = new SimulationStepEvent();
     this.wake(_simulationStepEvent);
   }
@@ -133,9 +196,10 @@ public class Environment extends Agent {
     InputOutput.<String>println("in SimulationStepEvent");
     for (final AgentBody body : this.listAgentBodies) {
       {
-        List<Position> listNeighbours = new ArrayList<Position>();
         Position _position = body.getPosition();
-        PerceptionReceivedEvent _perceptionReceivedEvent = new PerceptionReceivedEvent(this.listObstacles, _position, listNeighbours);
+        List<Position> listNeighbours = this.computePerception(_position, this.listAgentBodies);
+        Position _position_1 = body.getPosition();
+        PerceptionReceivedEvent _perceptionReceivedEvent = new PerceptionReceivedEvent(this.listObstacles, _position_1, listNeighbours);
         Address _pedestrianAddress = body.getPedestrianAddress();
         Scope<Address> _addresses = Scopes.addresses(_pedestrianAddress);
         this.emit(_perceptionReceivedEvent, _addresses);
@@ -146,6 +210,9 @@ public class Environment extends Agent {
   @Percept
   public void _handle_EndOfStepEvent_3(final EndOfStepEvent occurrence) {
     InputOutput.<String>println("in EndOfStepEvent");
+    this.resolveConflict();
+    SimulationStepEvent _simulationStepEvent = new SimulationStepEvent();
+    this.wake(_simulationStepEvent);
   }
   
   @Percept

@@ -1,8 +1,11 @@
 package fr.utbm.ia54.simulationorca.sarlagent;
 
+import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle;
 import fr.utbm.ia54.simulationorca.framework.Position;
+import fr.utbm.ia54.simulationorca.sarlcapacity.ComputeNextMoveCapacity;
 import fr.utbm.ia54.simulationorca.sarlevent.InfuenceReceivedEvent;
 import fr.utbm.ia54.simulationorca.sarlevent.PerceptionReceivedEvent;
+import fr.utbm.ia54.simulationorca.sarlskill.ComputeORCASkill;
 import io.sarl.core.Initialize;
 import io.sarl.lang.annotation.Generated;
 import io.sarl.lang.core.Address;
@@ -14,6 +17,7 @@ import io.sarl.lang.core.Percept;
 import io.sarl.lang.core.Scope;
 import io.sarl.util.Scopes;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.InputOutput;
@@ -89,6 +93,11 @@ public class Pedestrian extends Agent {
     return getSkill(io.sarl.core.DefaultContextInteractions.class).spawn(aAgent, params);
   }
   
+  @Generated
+  protected Position nextMove(final List<Obstacle> listObstacles, final Position bodyPos, final List<Position> listNeighbours) {
+    return getSkill(fr.utbm.ia54.simulationorca.sarlcapacity.ComputeNextMoveCapacity.class).nextMove(listObstacles, bodyPos, listNeighbours);
+  }
+  
   protected Position initialPosition;
   
   protected Position finalPostition;
@@ -101,12 +110,14 @@ public class Pedestrian extends Agent {
     Object _get_2 = occurrence.parameters[0];
     Object _get_3 = ((Object[])Conversions.unwrapArray(((Collection<Object>) _get_2), Object.class))[0];
     this.finalPostition = ((Position) _get_3);
+    ComputeORCASkill skillORCA = new ComputeORCASkill();
+    this.<ComputeORCASkill>setSkill(ComputeNextMoveCapacity.class, skillORCA);
   }
   
   @Percept
   public void _handle_PerceptionReceivedEvent_2(final PerceptionReceivedEvent occurrence) {
     InputOutput.<String>println("in PerceptionReceivedEvent");
-    Position newPos = new Position(3, 3);
+    Position newPos = this.nextMove(occurrence.listObstacles, occurrence.bodyPos, occurrence.listNeighbours);
     InfuenceReceivedEvent _infuenceReceivedEvent = new InfuenceReceivedEvent(newPos);
     Address _source = occurrence.getSource();
     Scope<Address> _addresses = Scopes.addresses(_source);

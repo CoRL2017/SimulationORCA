@@ -15,18 +15,37 @@ import fr.utbm.ia54.simulationorca.sarlevent.InfuenceReceivedEvent
 import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle
 import fr.utbm.ia54.simulationorca.sarlevent.PerceptionReceivedEvent
 import io.sarl.util.Scopes
+import fr.utbm.ia54.simulationorca.gui.EnvironmentListener
+import fr.utbm.ia54.simulationorca.sarlcapacity.ComputePerceptionCapacity
+import fr.utbm.ia54.simulationorca.sarlcapacity.ResolveConflictCapacity
+import io.sarl.core.Schedules
+import fr.utbm.ia54.simulationorca.sarlskill.ComputePerceptionSkill
+import fr.utbm.ia54.simulationorca.sarlskill.ResolveConflictSkill
 
 agent Environment{
 	
-	uses DefaultContextInteractions, Lifecycle, Behaviors
+	uses DefaultContextInteractions, Lifecycle, Behaviors,ComputePerceptionCapacity,ResolveConflictCapacity,Schedules
 	
 	var listAgentBodies : List<AgentBody> = new ArrayList<AgentBody>()
 	var listObstacles : List<Obstacle> = new ArrayList<Obstacle>()
 	
 	on Initialize{
+		
+		println("in Initialize")
 		spawnPedestrianBodies(occurrence.parameters.get(0) as List<Address>, occurrence.parameters.get(1) as List<Position>)
 		
+		//set skills
+		var skillCompute = new ComputePerceptionSkill
+    	setSkill(ComputePerceptionCapacity,skillCompute)
+    	
+    	var skillResolve = new ResolveConflictSkill
+		setSkill(ResolveConflictCapacity,skillResolve)
+		
 		//TODO -creation Obstacles
+		
+		every(5000)[
+			wake(new EndOfStepEvent)	
+		]
 		
 		wake(new SimulationStepEvent)
 
@@ -37,8 +56,8 @@ agent Environment{
 		
 		//for each pedestrian
 		for (body as AgentBody : this.listAgentBodies) {
-		 	//TODO use capacity CalculPerception
-			var listNeighbours : List<Position> = new ArrayList<Position>()
+		 	//use the skill computePerception
+			var listNeighbours : List<Position> = computePerception(body.position,this.listAgentBodies)
 			
 			emit(new PerceptionReceivedEvent(listObstacles,body.position,listNeighbours),Scopes.addresses(body.pedestrianAddress))
 		}
@@ -47,11 +66,17 @@ agent Environment{
 	
 	on EndOfStepEvent{
 		println("in EndOfStepEvent")
-		//TODO use capacity ResolveConflictCapacity
+		//use skill ResolveConflictSkill
+		resolveConflict
+		
+			
+		//do an other step of Simulation
+		wake(new SimulationStepEvent)
 	}
 	
 	on InfuenceReceivedEvent{
 		println("in InfuenceReceivedEvent")
+		
 	}
 	
 	def spawnPedestrianBodies(listPedestrianAdresses : List<Address>, listInitialPositions : List<Position>){

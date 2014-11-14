@@ -1,0 +1,16 @@
+package fr.utbm.ia54.simulationorca.sarlskill
+
+import fr.utbm.ia54.simulationorca.sarlcapacity.ComputePerceptionCapacity
+import fr.utbm.ia54.simulationorca.framework.Position
+import java.util.List
+import java.util.ArrayList
+import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody
+
+skill ComputePerceptionSkill implements ComputePerceptionCapacity{
+	
+	def computePerception(bodyPos : Position,listAgentBodies : List<AgentBody>) : List<Position> {
+		var listNeighbours: List <Position> = new ArrayList<Position>()
+		
+		return listNeighbours;
+	}
+}
