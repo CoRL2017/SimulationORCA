@@ -1,0 +1,33 @@
+# Eclipse
+.classpath
+.project
+.settings/
+.metadata/
+
+#SARL
+src/main/generated-sources/xtend
+src-gen/
+
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
+
+# Maven
+log/
+target/
+
+# Foo
+*~
+
+# Latex
+*.toc
+*.log
+*.aux
+*.pyg
+*.synctex.gz
+*.out
