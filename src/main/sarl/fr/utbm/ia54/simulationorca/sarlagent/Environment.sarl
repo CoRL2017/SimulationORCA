@@ -1,26 +1,26 @@
 package fr.utbm.ia54.simulationorca.sarlagent
 
-import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody
-import fr.utbm.ia54.simulationorca.framework.Position
-import io.sarl.core.Behaviors
 import io.sarl.core.DefaultContextInteractions
 import io.sarl.core.Initialize
 import io.sarl.core.Lifecycle
+import java.util.List
 import io.sarl.lang.core.Address
+import fr.utbm.ia54.simulationorca.framework.Position
+import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody
 import java.util.ArrayList
 import java.util.List
-import fr.utbm.ia54.simulationorca.sarlevent.SimulationStepEvent
-import fr.utbm.ia54.simulationorca.sarlevent.EndOfStepEvent
 import fr.utbm.ia54.simulationorca.sarlevent.InfuenceReceivedEvent
 import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle
 import fr.utbm.ia54.simulationorca.sarlevent.PerceptionReceivedEvent
 import io.sarl.util.Scopes
-import fr.utbm.ia54.simulationorca.gui.EnvironmentListener
 import fr.utbm.ia54.simulationorca.sarlcapacity.ComputePerceptionCapacity
 import fr.utbm.ia54.simulationorca.sarlcapacity.ResolveConflictCapacity
 import io.sarl.core.Schedules
 import fr.utbm.ia54.simulationorca.sarlskill.ComputePerceptionSkill
 import fr.utbm.ia54.simulationorca.sarlskill.ResolveConflictSkill
+import io.sarl.core.Behaviors
+import fr.utbm.ia54.simulationorca.sarlevent.EndOfStepEvent
+import fr.utbm.ia54.simulationorca.sarlevent.SimulationStepEvent
 
 agent Environment{
 	
@@ -33,6 +33,7 @@ agent Environment{
 		
 		println("in Initialize")
 		spawnPedestrianBodies(occurrence.parameters.get(0) as List<Address>, occurrence.parameters.get(1) as List<Position>)
+
 		
 		//set skills
 		var skillCompute = new ComputePerceptionSkill
@@ -43,7 +44,7 @@ agent Environment{
 		
 		//TODO -creation Obstacles
 		
-		every(5000)[
+		every(10000)[
 			wake(new EndOfStepEvent)	
 		]
 		

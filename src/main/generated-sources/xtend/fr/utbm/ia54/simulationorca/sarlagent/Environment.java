@@ -186,7 +186,7 @@ public class Environment extends Agent {
         Environment.this.wake(_endOfStepEvent);
       }
     };
-    this.every(5000, _function);
+    this.every(10000, _function);
     SimulationStepEvent _simulationStepEvent = new SimulationStepEvent();
     this.wake(_simulationStepEvent);
   }
