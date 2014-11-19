@@ -1,6 +1,0 @@
-package fr.utbm.ia54.simulationorca.sarlcapacity
-
-capacity ResolveConflictCapacity {
-	
-	def resolveConflict
-}

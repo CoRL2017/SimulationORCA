@@ -17,6 +17,10 @@ public class XMLParserTest extends TestCase {
 		for(Obstacle obs : xmlParser.getListObstacles()){
 			System.out.println("Obstacle " + obs.getPosA().getX());
 		}
+		
+		for(Obstacle obs : xmlParser.getListObstacles()){
+			System.out.println("Obstacle " + obs.getPosA().getX());
+		}
 	}
 
 }
