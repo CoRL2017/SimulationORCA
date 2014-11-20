@@ -7,21 +7,21 @@ import java.util.List
 import java.util.ArrayList
 import fr.utbm.ia54.simulationorca.framework.Position
 import io.sarl.lang.core.Address
+import fr.utbm.ia54.simulationorca.framework.XMLParser
+import fr.utbm.ia54.simulationorca.gui.SimulationFrame
+import java.util.HashSet
 
 agent Kernel {
 	
 	uses DefaultContextInteractions, Lifecycle
 	
 	on Initialize {
+		var xmlParser : XMLParser = new XMLParser("./environment_structure.xml")
+			
+		var listPedestrianAddresses = spawnPedestrians(xmlParser.listInitialPositionPedestrians, xmlParser.listFinalPositionPedestrians )
+		var listener : SimulationFrame = new SimulationFrame(new HashSet(xmlParser.listObstacles))
+		spawn(Environment, #[listPedestrianAddresses, xmlParser.listInitialPositionPedestrians, xmlParser.listObstacles,listener])
 		
-		var listPositionInitPedestrian : List<Position> = new ArrayList<Position>()
-		var listPositionFinalPedestrian : List<Position> = new ArrayList<Position>()
-		//TODO lecture en xml
-		listPositionInitPedestrian.add(new Position(1,1))
-		listPositionFinalPedestrian.add(new Position(5,5))
-		
-		var listPedestrianAddresses = spawnPedestrians(listPositionInitPedestrian, listPositionFinalPedestrian )
-		spawn(Environment, #[listPedestrianAddresses, listPositionInitPedestrian])
 		killMe	
 	}
 	

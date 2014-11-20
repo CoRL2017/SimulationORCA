@@ -2,5 +2,5 @@ package fr.utbm.ia54.simulationorca.sarlcapacity
 
 capacity UpdateEnvironmentCapacity {
 	
-	def blabla
+	def updateEnvironment()
 }
