@@ -29,8 +29,7 @@ agent Kernel {
 		var listPedestrianAddresses : List<Address> = new ArrayList<Address>()
 		
 		for (var i=0; i<listInitialPedestrianPositions.size(); i++) {
-			var params = #[listInitialPedestrianPositions.get(i), listFinalPedestrianPositions.get(i)]
-			var id = spawn(Pedestrian, params)
+			var id = spawn(Pedestrian, #[listInitialPedestrianPositions.get(i), listFinalPedestrianPositions.get(i)])
 			listPedestrianAddresses.add(defaultSpace.getAddress(id))
 		}
 		

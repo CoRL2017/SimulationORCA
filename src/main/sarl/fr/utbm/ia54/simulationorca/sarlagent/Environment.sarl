@@ -21,11 +21,11 @@ import io.sarl.core.Behaviors
 import fr.utbm.ia54.simulationorca.sarlevent.EndOfStepEvent
 import fr.utbm.ia54.simulationorca.sarlevent.SimulationStepEvent
 import fr.utbm.ia54.simulationorca.gui.EnvironmentListener
-import java.util.HashSet
 import fr.utbm.ia54.simulationorca.sarlskill.UpdateEnvironmentSkill
 import fr.utbm.ia54.simulationorca.sarlcapacity.UpdateEnvironmentCapacity
 import java.util.HashMap
 import java.util.Map
+import java.util.HashSet
 
 agent Environment{
 	
@@ -33,7 +33,6 @@ agent Environment{
 	
 	var hashAgentBodies : Map<Address,AgentBody> = new HashMap<Address,AgentBody>
 	//TODO remplacer listAgentBodies par hashAgentBodies.value()  
-	var listAgentBodies : List<AgentBody> = new ArrayList<AgentBody>
 	var listObstacles : List<Obstacle> = new ArrayList<Obstacle>
 	var listListeners : List<EnvironmentListener> = new ArrayList<EnvironmentListener>
 	
@@ -67,21 +66,18 @@ agent Environment{
 	on SimulationStepEvent{
 		println("in SimulationStepEvent")
 		
-		//for each pedestrian
-		for (body as AgentBody : this.listAgentBodies) {
+		for (body as AgentBody : hashAgentBodies.values()) {
 		 	//use the skill computePerception
-			var listNeighbours : List<Position> = computePerception(body.position,this.listAgentBodies)
-			
+			var listNeighbours : List<Position> = computePerception(body.position, new ArrayList(hashAgentBodies.values()))
 			emit(new PerceptionReceivedEvent(listObstacles,body.position,listNeighbours),Scopes.addresses(body.pedestrianAddress))
 		}
-		
 	}
 	
 	on EndOfStepEvent{
 		println("in EndOfStepEvent")
 		//use skill ResolveConflictSkill
 		resolveConflict
-		
+		// Fire update signal to the listeners
 		fireUpdateFrame
 		//do an other step of Simulation
 		wake(new SimulationStepEvent)
@@ -89,22 +85,19 @@ agent Environment{
 	
 	on InfuenceReceivedEvent{
 		println("in InfuenceReceivedEvent")
-		var agentTemp : AgentBody =new AgentBody(occurrence.source,occurrence.bodyPos)
-		hashAgentBodies.put(occurrence.source,agentTemp)
-		 
-		
+		var agentTemp : AgentBody = new AgentBody(occurrence.source,occurrence.bodyPos)
+		hashAgentBodies.put(occurrence.source, agentTemp)	
 	}
 	
 	def fireUpdateFrame(){
 		for(listener as EnvironmentListener : listListeners){
-			listener.updateGraphics(new HashSet(listAgentBodies))			
+			listener.updateGraphics(new HashSet(hashAgentBodies.values()))			
 		}
 	}
 	
 	def spawnPedestrianBodies(listPedestrianAdresses : List<Address>, listInitialPositions : List<Position>){
 		for(var i=0; i<listPedestrianAdresses.size(); i++){
 			hashAgentBodies.put(listPedestrianAdresses.get(i),new AgentBody(listPedestrianAdresses.get(i), listInitialPositions.get(i)))
-			listAgentBodies.add(new AgentBody(listPedestrianAdresses.get(i), listInitialPositions.get(i)))
 		}
 	}
 	

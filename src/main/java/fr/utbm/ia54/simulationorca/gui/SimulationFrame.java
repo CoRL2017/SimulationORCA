@@ -62,13 +62,14 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 		};
 		mainPanel.setBackground(Color.black);
 		
+		this.setVisible(true);
 		this.setContentPane(mainPanel);
 	}
 	
 	@Override
 	public void updateGraphics(Set<AgentBody> pedestrianBodies) {
 		this.pedestrianBodies = pedestrianBodies;
-		mainPanel.repaint();
+		repaint();
 	}
 	
 // TEST DE LA FRAME
