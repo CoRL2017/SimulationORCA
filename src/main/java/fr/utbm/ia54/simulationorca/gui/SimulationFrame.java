@@ -11,13 +11,11 @@ import javax.swing.JPanel;
 
 import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody;
 import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle;
+import fr.utbm.ia54.simulationorca.framework.Constants;
 
 public class SimulationFrame extends JFrame implements EnvironmentListener {
 
 	private static final long serialVersionUID = -3163338454480158226L;
-	private static int HEIGHT = 500;
-	private static int WIDTH = 500;
-	private static int CIRCLE_DIAMETER = 50;
 	
 	@SuppressWarnings("unused")
 	private final Set<Obstacle> obstacles;
@@ -27,35 +25,44 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 	public SimulationFrame(final Set<Obstacle> obstacles){
 		this.obstacles = obstacles;
 		
-		// Paramètres de définition de la fenêtre
-		this.setSize(new Dimension(WIDTH, HEIGHT));
-		this.setTitle("SUPER BLAAA");
+		// Définition des aramètres de la fenêtre
+		this.setSize(new Dimension(Constants.FRAME_WIDTH, Constants.FRAME_HEIGHT));
+		this.setTitle(Constants.FRAME_TITLE);
+		this.setLocationRelativeTo(null);
 		
-		// Création du Jpanel responsable de l'affichage
+		// Création du Panel responsable de l'affichage
 		mainPanel = new JPanel(){
 			private static final long serialVersionUID = 1590001807804743054L;
 
 			@Override
 			public void paint(Graphics graphics) {
+
 				super.paint(graphics);
 				
 				// Dessin des obstacles
-				for(Obstacle obs : obstacles){
-					graphics.setColor(Color.white);
-					graphics.drawLine(obs.getPosA().getX(), obs.getPosA().getY(), obs.getPosB().getX(), obs.getPosB().getY());
-				} 
+				if( obstacles != null){
+					for(Obstacle obs : obstacles){
+						graphics.setColor(Color.white);
+						graphics.drawLine(obs.getPosA().getX(), obs.getPosA().getY(), obs.getPosB().getX(), obs.getPosB().getY());
+					} 					
+				} else {
+					System.out.println("SimulationFrame - No obstacle to be drawn");
+				}
 				
 				// Dessin des piétons
-				for(AgentBody body : pedestrianBodies){
-					graphics.setColor(Color.cyan);
-					graphics.drawOval(body.getPosition().getX(), body.getPosition().getY(), CIRCLE_DIAMETER, CIRCLE_DIAMETER);
+				if( pedestrianBodies != null){
+					for(AgentBody body : pedestrianBodies){
+						graphics.setColor(Color.cyan);
+						graphics.drawOval(body.getPosition().getX(), body.getPosition().getY(), Constants.PEDSTRIAN_CIRCLE_DIAMETER, Constants.PEDSTRIAN_CIRCLE_DIAMETER);
+					}					
+				} else {
+					System.out.println("SimulationFrame - No pedestrian to be drawn");
 				}
 			}
 		};
 		mainPanel.setBackground(Color.black);
 		
 		this.setContentPane(mainPanel);
-		this.setVisible(true);
 	}
 	
 	@Override
@@ -65,9 +72,12 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 	}
 	
 // TEST DE LA FRAME
-	@SuppressWarnings("unused")
-	public static void main(String[] args){
-		SimulationFrame frame = new SimulationFrame(null);	
-	}
+//	@SuppressWarnings("unused")
+//	public static void main(String[] args){
+//		XMLParser test = new XMLParser(Constants.XML_STRUCTURE_FILEPATH);
+//		test.loadXMLDocument();
+//		
+//		SimulationFrame frame = new SimulationFrame(test.getListObstacles());	
+//	}
 	
 }

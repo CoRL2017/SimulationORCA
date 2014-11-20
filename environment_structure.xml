@@ -1,3 +1,17 @@
+<!-- Describes world structure by the positions of its elements -->
+<!-- In order to normalize the positions, we assume the world is 1024px large and 768px high -->
+
+<!-- Pedestrian description : 
+	 initial x position, 
+	 initial y position, 
+	 final x position, 
+	 final y position -->
+<!-- Obstacle description (segment between PointA and PointB) : 
+	 PointA x position, 
+	 PointA y position, 
+	 PointB x position, 
+	 PointB y position -->
+
 <environment>
 	<obstacles>
 		<obstacle>50,50,100,50</obstacle>

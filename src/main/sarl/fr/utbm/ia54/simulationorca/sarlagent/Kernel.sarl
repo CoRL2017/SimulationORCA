@@ -10,17 +10,17 @@ import io.sarl.lang.core.Address
 import fr.utbm.ia54.simulationorca.framework.XMLParser
 import fr.utbm.ia54.simulationorca.gui.SimulationFrame
 import java.util.HashSet
+import fr.utbm.ia54.simulationorca.framework.Constants
 
 agent Kernel {
 	
 	uses DefaultContextInteractions, Lifecycle
 	
-	on Initialize {
-		var xmlParser : XMLParser = new XMLParser("./environment_structure.xml")
-			
+	on Initialize {			
+		var xmlParser : XMLParser = new XMLParser(Constants.XML_STRUCTURE_FILEPATH)
 		var listPedestrianAddresses = spawnPedestrians(xmlParser.listInitialPositionPedestrians, xmlParser.listFinalPositionPedestrians )
 		var listener : SimulationFrame = new SimulationFrame(new HashSet(xmlParser.listObstacles))
-		spawn(Environment, #[listPedestrianAddresses, xmlParser.listInitialPositionPedestrians, xmlParser.listObstacles,listener])
+		spawn(Environment, #[listPedestrianAddresses, xmlParser.listInitialPositionPedestrians, xmlParser.listObstacles, listener])
 		
 		killMe	
 	}
