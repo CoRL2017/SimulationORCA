@@ -7,7 +7,7 @@ import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle
 
 skill ComputeORCASkill implements ComputeNextMoveCapacity {
 	def nextMove (listObstacles : List<Obstacle>,bodyPos: Position,listNeighbours : List<Position> ): Position {
-		var newPos : Position = new Position(3,3)
+		var newPos : Position = new Position( (Math.random()*500 +1) as int,(Math.random()*500 +1) as int)
 		return newPos
 	}
 }

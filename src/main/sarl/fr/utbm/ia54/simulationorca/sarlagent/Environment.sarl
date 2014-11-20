@@ -31,7 +31,8 @@ agent Environment{
 	
 	uses DefaultContextInteractions, Lifecycle, Behaviors,ComputePerceptionCapacity,ResolveConflictCapacity,UpdateEnvironmentCapacity,Schedules
 	
-	//var hashAgentBodies : Map<Address,AgentBody> = new HashMap<Address,AgentBody>()
+	var hashAgentBodies : Map<Address,AgentBody> = new HashMap<Address,AgentBody>()
+	//TODO remplacer listAgentBodies par hashAgentBodies.value()  
 	var listAgentBodies : List<AgentBody> = new ArrayList<AgentBody>()
 	var listObstacles : List<Obstacle> = new ArrayList<Obstacle>()
 	var envListener : EnvironmentListener
@@ -82,7 +83,8 @@ agent Environment{
 		//use skill ResolveConflictSkill
 		resolveConflict
 		
-		envListener.updateGraphics(new HashSet(listAgentBodies))
+		//envListener.updateGraphics(new HashSet(listAgentBodies))
+		envListener.updateGraphics(new HashSet<AgentBody>(hashAgentBodies.values))
 			
 		//do an other step of Simulation
 		wake(new SimulationStepEvent)
@@ -90,13 +92,15 @@ agent Environment{
 	
 	on InfuenceReceivedEvent{
 		println("in InfuenceReceivedEvent")
-		//hashAgentBodies.put(occurrence.source,new AgentBody(occurrence.source,occurrence.parameters.get(0) as Position) 
+		var agentTemp : AgentBody =new AgentBody(occurrence.source,occurrence.bodyPos)
+		hashAgentBodies.put(occurrence.source,agentTemp)
+		 
 		
 	}
 	
 	def spawnPedestrianBodies(listPedestrianAdresses : List<Address>, listInitialPositions : List<Position>){
 		for(var i=0; i<listPedestrianAdresses.size(); i++){
-			//hashAgentBodies.put(listPedestrianAdresses.get(i),new AgentBody(listPedestrianAdresses.get(i), listInitialPositions.get(i)))
+			hashAgentBodies.put(listPedestrianAdresses.get(i),new AgentBody(listPedestrianAdresses.get(i), listInitialPositions.get(i)))
 			listAgentBodies.add(new AgentBody(listPedestrianAdresses.get(i), listInitialPositions.get(i)))
 		}
 	}

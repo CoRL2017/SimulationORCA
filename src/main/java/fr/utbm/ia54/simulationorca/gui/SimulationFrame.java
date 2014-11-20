@@ -38,6 +38,7 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 			@Override
 			public void paint(Graphics graphics) {
 				super.paint(graphics);
+				
 				// Dessin des obstacles
 				for(Obstacle obs : obstacles){
 					graphics.setColor(Color.white);
