@@ -2,10 +2,10 @@ package fr.utbm.ia54.simulationorca.sarlevent
 
 import fr.utbm.ia54.simulationorca.framework.Position
 
-event InfuenceReceivedEvent {
+event InfuenceEvent {
 	var bodyPos:Position
  	
-	new(bodyPos:Position){
-		this.bodyPos=bodyPos
+	new(bodyPos : Position){
+		this.bodyPos = bodyPos
 	}
 }

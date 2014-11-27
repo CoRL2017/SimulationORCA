@@ -1,16 +1,30 @@
 package fr.utbm.ia54.simulationorca.sarlskill
 
 import fr.utbm.ia54.simulationorca.sarlcapacity.ComputePerceptionCapacity
-import fr.utbm.ia54.simulationorca.framework.Position
 import java.util.List
-import java.util.ArrayList
+import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle
+import java.util.Collection
 import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody
+import fr.utbm.ia54.simulationorca.framework.Position
+import fr.utbm.ia54.simulationorca.framework.Constants
 
 skill ComputePerceptionSkill implements ComputePerceptionCapacity{
 	
-	def computePerception(bodyPos : Position,listAgentBodies : List<AgentBody>) : List<Position> {
-		var listNeighbours: List <Position> = new ArrayList<Position>()
-		
-		return listNeighbours;
+	def computePerception(bodyPos : Position, agentBodies : Collection<AgentBody>, obstacles : Collection<Obstacle>) : List<Object> {
+		var perceptions : List<Object>
+		for(neighbour as AgentBody : agentBodies){
+			if(bodyPos.distanceTo(neighbour.getPosition()) < Constants.PRECEPTION_DISTANCE){
+				// Add the position of every agent close enough to the perception list
+				perceptions.add(neighbour.getPosition())
+			}
+		}
+		for(obstacle as Obstacle : obstacles){
+			if(bodyPos.distanceTo(obstacle.getPosA()) < Constants.PRECEPTION_DISTANCE 
+				|| bodyPos.distanceTo(obstacle.getPosB()) < Constants.PRECEPTION_DISTANCE){
+				// Add the obstacles close enough to the perception list
+				perceptions.add(obstacle)
+			}
+		}
+		return perceptions
 	}
 }

@@ -4,10 +4,28 @@ import fr.utbm.ia54.simulationorca.sarlcapacity.ComputeNextMoveCapacity
 import fr.utbm.ia54.simulationorca.framework.Position
 import java.util.List
 import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle
+import java.util.ArrayList
 
 skill ComputeORCASkill implements ComputeNextMoveCapacity {
 	
-	def nextMove (listObstacles : List<Obstacle>,bodyPos: Position,listNeighbours : List<Position> ): Position {
+	def nextMove (bodyPos : Position, perceptions : List<Object> ): Position {
+		var obstacles : List<Obstacle> = new ArrayList<Obstacle>
+		var neighbours : List<Position> = new ArrayList<Position>
+		
+		for (elt as Object : perceptions){
+			switch (elt) {
+					case typeof(Obstacle) : { 
+						obstacles.add(elt as Obstacle);
+					} case typeof(Position) : {
+						neighbours.add(elt as Position);
+					}
+					default : {
+						println("Unknown type in perception list")
+					}
+			}
+		}
+		println("Taille liste obstacles :" + obstacles.size)
+		println("Taille liste voisins :" + neighbours.size)
 		var newPos : Position = new Position( (Math.random()*500 +1) as int,(Math.random()*500 +1) as int)
 		return newPos
 	}

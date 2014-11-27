@@ -3,9 +3,9 @@ package fr.utbm.ia54.simulationorca.sarlagent
 import io.sarl.core.Initialize
 import io.sarl.core.Lifecycle
 import fr.utbm.ia54.simulationorca.framework.Position
-import fr.utbm.ia54.simulationorca.sarlevent.PerceptionReceivedEvent
+import fr.utbm.ia54.simulationorca.sarlevent.PerceptionEvent
 import io.sarl.core.DefaultContextInteractions
-import fr.utbm.ia54.simulationorca.sarlevent.InfuenceReceivedEvent
+import fr.utbm.ia54.simulationorca.sarlevent.InfuenceEvent
 import io.sarl.util.Scopes
 import fr.utbm.ia54.simulationorca.sarlcapacity.ComputeNextMoveCapacity
 import fr.utbm.ia54.simulationorca.sarlskill.ComputeORCASkill
@@ -13,7 +13,6 @@ import fr.utbm.ia54.simulationorca.sarlskill.ComputeORCASkill
 agent Pedestrian {
 
 	uses Lifecycle, DefaultContextInteractions,ComputeNextMoveCapacity
-
 	
 	var initialPosition : Position
 	var finalPostition : Position
@@ -27,15 +26,15 @@ agent Pedestrian {
 		setSkill(ComputeNextMoveCapacity,skillORCA)
 	}
 	
-	on PerceptionReceivedEvent{
+	on PerceptionEvent{
 		println("in PerceptionReceivedEvent")
-		// use skill ComputeORCASkill
-		var newPos : Position = nextMove(occurrence.listObstacles,occurrence.bodyPos,occurrence.listNeighbours)
 		
-		/* 
-		 * send his new position with event InfluenceReceivedEvent		
-		 * scope send only to the source of PerceptionReceivedEvent, so Environment
-		*/
-		emit(new InfuenceReceivedEvent(newPos),Scopes.addresses(occurrence.source))
+		// Compute next move using ORCA algorithm
+		var newPos : Position = nextMove(occurrence.bodyPos, occurrence.perceptions)
+		
+		// Send computed position to the environment
+		// selected scope only send the Influence event to the source 
+		// of the Perception event, that is to say the Environment
+		emit(new InfuenceEvent(newPos),Scopes.addresses(occurrence.source))
 	}	
 }

@@ -10,7 +10,9 @@ public class Position {
 		this.y = yPos;
 	}
 	
-	public Position(){
+	public double distanceTo(Position pos){
+		double distance = Math.sqrt(Math.pow(this.x - pos.x, 2) + Math.pow(this.y - pos.y, 2));
+		return distance;
 	}
 	
 	public int getX() {
