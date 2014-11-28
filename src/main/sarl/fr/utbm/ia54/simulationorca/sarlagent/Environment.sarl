@@ -8,7 +8,7 @@ import io.sarl.lang.core.Address
 import fr.utbm.ia54.simulationorca.framework.Position
 import fr.utbm.ia54.simulationorca.framework.Constants
 import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody
-import java.util.ArrayList
+
 import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle
 import fr.utbm.ia54.simulationorca.sarlevent.PerceptionEvent
 import io.sarl.util.Scopes
@@ -27,6 +27,7 @@ import java.util.HashMap
 import java.util.Map
 import java.util.HashSet
 import fr.utbm.ia54.simulationorca.sarlevent.InfluenceEvent
+import java.util.ArrayList
 
 agent Environment{
 	
@@ -81,6 +82,7 @@ agent Environment{
 		wake(new SimulationStepEvent)
 	}
 	
+
 	on InfluenceEvent{
 		println("in InfuenceReceivedEvent")
 		var agentTemp : AgentBody = new AgentBody(occurrence.source,occurrence.bodyPos)

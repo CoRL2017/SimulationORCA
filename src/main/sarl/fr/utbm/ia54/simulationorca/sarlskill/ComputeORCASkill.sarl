@@ -1,19 +1,19 @@
 package fr.utbm.ia54.simulationorca.sarlskill
 
-import fr.utbm.ia54.simulationorca.sarlcapacity.ComputeNextMoveCapacity
 import fr.utbm.ia54.simulationorca.framework.Position
 import java.util.List
 import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle
 import java.util.ArrayList
+import fr.utbm.ia54.simulationorca.sarlcapacity.ComputeNextMoveCapacity
 
 skill ComputeORCASkill implements ComputeNextMoveCapacity {
 	
 	def nextMove (bodyPos : Position, perceptions : List<Object> ): Position {
 		var obstacles : List<Obstacle> = new ArrayList<Obstacle>
 		var neighbours : List<Position> = new ArrayList<Position>
-		
+	
 		for (elt as Object : perceptions){
-			switch (elt) {
+			switch (elt.class) {
 					case typeof(Obstacle) : { 
 						obstacles.add(elt as Obstacle);
 					} 
@@ -25,10 +25,10 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 					}
 			}
 		}
+		
 		println("Taille liste obstacles :" + obstacles.size)
 		println("Taille liste voisins :" + neighbours.size)
 		var newPos : Position = new Position( (Math.random()*500 +1) as int,(Math.random()*500 +1) as int)
 		return newPos
 	}
-	
 }
