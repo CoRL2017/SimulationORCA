@@ -7,11 +7,12 @@ import java.util.Collection
 import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody
 import fr.utbm.ia54.simulationorca.framework.Position
 import fr.utbm.ia54.simulationorca.framework.Constants
+import java.util.ArrayList
 
 skill ComputePerceptionSkill implements ComputePerceptionCapacity{
 	
 	def computePerception(bodyPos : Position, agentBodies : Collection<AgentBody>, obstacles : Collection<Obstacle>) : List<Object> {
-		var perceptions : List<Object>
+		var perceptions : List<Object> = new ArrayList<Object>();
 		for(neighbour as AgentBody : agentBodies){
 			if(bodyPos.distanceTo(neighbour.getPosition()) < Constants.PRECEPTION_DISTANCE){
 				// Add the position of every agent close enough to the perception list

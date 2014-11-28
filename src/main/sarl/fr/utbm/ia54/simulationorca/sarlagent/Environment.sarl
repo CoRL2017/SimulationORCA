@@ -9,7 +9,7 @@ import fr.utbm.ia54.simulationorca.framework.Position
 import fr.utbm.ia54.simulationorca.framework.Constants
 import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody
 import java.util.ArrayList
-import fr.utbm.ia54.simulationorca.sarlevent.InfuenceReceivedEvent
+import fr.utbm.ia54.simulationorca.sarlevent.InfuenceEvent
 import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle
 import fr.utbm.ia54.simulationorca.sarlevent.PerceptionEvent
 import io.sarl.util.Scopes
@@ -82,7 +82,7 @@ agent Environment{
 		wake(new SimulationStepEvent)
 	}
 	
-	on InfuenceReceivedEvent{
+	on InfuenceEvent{
 		println("in InfuenceReceivedEvent")
 		var agentTemp : AgentBody = new AgentBody(occurrence.source,occurrence.bodyPos)
 		hashAgentBodies.put(occurrence.source, agentTemp)	
