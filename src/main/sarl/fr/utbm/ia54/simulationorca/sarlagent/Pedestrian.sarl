@@ -5,10 +5,10 @@ import io.sarl.core.Lifecycle
 import fr.utbm.ia54.simulationorca.framework.Position
 import fr.utbm.ia54.simulationorca.sarlevent.PerceptionEvent
 import io.sarl.core.DefaultContextInteractions
-import fr.utbm.ia54.simulationorca.sarlevent.InfuenceEvent
 import io.sarl.util.Scopes
 import fr.utbm.ia54.simulationorca.sarlcapacity.ComputeNextMoveCapacity
 import fr.utbm.ia54.simulationorca.sarlskill.ComputeORCASkill
+import fr.utbm.ia54.simulationorca.sarlevent.InfluenceEvent
 
 agent Pedestrian {
 
@@ -35,6 +35,8 @@ agent Pedestrian {
 		// Send computed position to the environment
 		// selected scope only send the Influence event to the source 
 		// of the Perception event, that is to say the Environment
-		emit(new InfuenceEvent(newPos),Scopes.addresses(occurrence.source))
-	}	
+		
+		emit(new InfluenceEvent(newPos),Scopes.addresses(occurrence.source))
+	}
+	
 }

@@ -16,7 +16,8 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 			switch (elt) {
 					case typeof(Obstacle) : { 
 						obstacles.add(elt as Obstacle);
-					} case typeof(Position) : {
+					} 
+					case typeof(Position) : {
 						neighbours.add(elt as Position);
 					}
 					default : {

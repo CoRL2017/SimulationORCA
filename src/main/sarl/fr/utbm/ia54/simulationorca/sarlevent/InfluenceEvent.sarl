@@ -2,7 +2,7 @@ package fr.utbm.ia54.simulationorca.sarlevent
 
 import fr.utbm.ia54.simulationorca.framework.Position
 
-event InfuenceEvent {
+event InfluenceEvent {
 	var bodyPos:Position
  	
 	new(bodyPos : Position){

@@ -9,7 +9,6 @@ import fr.utbm.ia54.simulationorca.framework.Position
 import fr.utbm.ia54.simulationorca.framework.Constants
 import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody
 import java.util.ArrayList
-import fr.utbm.ia54.simulationorca.sarlevent.InfuenceReceivedEvent
 import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle
 import fr.utbm.ia54.simulationorca.sarlevent.PerceptionEvent
 import io.sarl.util.Scopes
@@ -27,13 +26,13 @@ import fr.utbm.ia54.simulationorca.sarlcapacity.UpdateEnvironmentCapacity
 import java.util.HashMap
 import java.util.Map
 import java.util.HashSet
+import fr.utbm.ia54.simulationorca.sarlevent.InfluenceEvent
 
 agent Environment{
 	
 	uses DefaultContextInteractions, Lifecycle, Behaviors,ComputePerceptionCapacity,ResolveConflictCapacity,UpdateEnvironmentCapacity,Schedules
 	
 	var hashAgentBodies : Map<Address,AgentBody> = new HashMap<Address,AgentBody>
-	//TODO remplacer listAgentBodies par hashAgentBodies.value()  
 	var listObstacles : List<Obstacle> = new ArrayList<Obstacle>
 	var listListeners : List<EnvironmentListener> = new ArrayList<EnvironmentListener>
 	
@@ -45,7 +44,7 @@ agent Environment{
 		setSkill(ResolveConflictCapacity, skillResolve)
 		var skillUpdate = new UpdateEnvironmentSkill()
 		setSkill(UpdateEnvironmentCapacity, skillUpdate)
-		
+				
 		println("in Initialize")
 		listObstacles=occurrence.parameters.get(2) as List<Obstacle>
 		spawnPedestrianBodies(occurrence.parameters.get(0) as List<Address>, occurrence.parameters.get(1) as List<Position>)
@@ -82,7 +81,7 @@ agent Environment{
 		wake(new SimulationStepEvent)
 	}
 	
-	on InfuenceReceivedEvent{
+	on InfluenceEvent{
 		println("in InfuenceReceivedEvent")
 		var agentTemp : AgentBody = new AgentBody(occurrence.source,occurrence.bodyPos)
 		hashAgentBodies.put(occurrence.source, agentTemp)	
