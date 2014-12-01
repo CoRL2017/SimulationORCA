@@ -23,19 +23,23 @@ import fr.utbm.ia54.simulationorca.sarlevent.SimulationStepEvent
 import fr.utbm.ia54.simulationorca.gui.EnvironmentListener
 import fr.utbm.ia54.simulationorca.sarlskill.UpdateEnvironmentSkill
 import fr.utbm.ia54.simulationorca.sarlcapacity.UpdateEnvironmentCapacity
-import java.util.HashMap
-import java.util.Map
 import java.util.HashSet
 import fr.utbm.ia54.simulationorca.sarlevent.InfluenceEvent
 import java.util.ArrayList
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.TreeMap
 
 agent Environment{
 	
 	uses DefaultContextInteractions, Lifecycle, Behaviors,ComputePerceptionCapacity,ResolveConflictCapacity,UpdateEnvironmentCapacity,Schedules
 	
-	var hashAgentBodies : Map<Address,AgentBody> = new HashMap<Address,AgentBody>
-	var listObstacles : List<Obstacle> = new ArrayList<Obstacle>
-	var listListeners : List<EnvironmentListener> = new ArrayList<EnvironmentListener>
+	var hashAgentBodies = new TreeMap<Address,AgentBody>
+	var listListeners = new ArrayList<EnvironmentListener>
+	var listObstacles : List<Obstacle>
+	
+	var receivedInfluences = <InfluenceEvent>newArrayList
+	
+	var fireStepEvent = new AtomicBoolean(false)
 	
 	on Initialize{
 		// Set skills
@@ -47,7 +51,7 @@ agent Environment{
 		setSkill(UpdateEnvironmentCapacity, skillUpdate)
 				
 		println("in Initialize")
-		listObstacles=occurrence.parameters.get(2) as List<Obstacle>
+		listObstacles = occurrence.parameters.get(2) as List<Obstacle>
 		spawnPedestrianBodies(occurrence.parameters.get(0) as List<Address>, occurrence.parameters.get(1) as List<Position>)
 		listListeners.add(occurrence.parameters.get(3) as EnvironmentListener)
 		
@@ -55,27 +59,34 @@ agent Environment{
 		fireUpdateFrame
 		
 		wake(new SimulationStepEvent)
-		
-		every(Constants.TIMEOUT)[
-			wake(new EndOfStepEvent)	
-		]
 
+		every(Constants.TIMEOUT)[
+			if (fireStepEvent.get) {
+				wake(new EndOfStepEvent)
+			}	
+		]
 	}
 	
 	on SimulationStepEvent{
 		println("in SimulationStepEvent")
-		
-		for (body as AgentBody : hashAgentBodies.values()) {
+				
+		for (body : hashAgentBodies.values()) {
 		 	//use the skill computePerception
-			var perceptions : List<Object> = computePerception(body.position, new ArrayList(hashAgentBodies.values()), listObstacles)
+			var perceptions = computePerception(body.position, hashAgentBodies.values(), listObstacles)
 			emit(new PerceptionEvent(body.position, perceptions),Scopes.addresses(body.pedestrianAddress))
 		}
+		
+		
+		fireStepEvent.set(true)
 	}
 	
 	on EndOfStepEvent{
+		fireStepEvent.set(false)
+	
 		println("in EndOfStepEvent")
 		//use skill ResolveConflictSkill
-		resolveConflict
+		resolveConflict(receivedInfluences, hashAgentBodies)
+		receivedInfluences.clear
 		// Fire update signal to the listeners
 		fireUpdateFrame
 		//do an other step of Simulation
@@ -85,8 +96,11 @@ agent Environment{
 
 	on InfluenceEvent{
 		println("in InfuenceReceivedEvent")
-		var agentTemp : AgentBody = new AgentBody(occurrence.source,occurrence.bodyPos)
-		hashAgentBodies.put(occurrence.source, agentTemp)	
+		receivedInfluences += occurrence
+		if (receivedInfluences.size >= hashAgentBodies.size) {
+			//pour enlever le pb de pls executions en mm temps
+			//wake(new EndOfStepEvent)
+		}	
 	}
 	
 	def fireUpdateFrame(){

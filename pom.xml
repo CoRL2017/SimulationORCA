@@ -4,15 +4,14 @@
   <groupId>fr.utbm.ia54</groupId>
   <artifactId>simulation.orca</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
 
   <name>simulation.orca</name>
   <url>http://maven.apache.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  	<sarl.version>0.1.0</sarl.version>
-    <janus.version>2.0.1.0</janus.version>
+  	<sarl.version>0.2.0-SNAPSHOT</sarl.version>
+    <janus.version>2.0.2.0-SNAPSHOT</janus.version>
   </properties>
   <build>
 	  <plugins>
@@ -54,5 +53,45 @@
        </exclusions>
     </dependency>
   </dependencies>
+  
+  <!-- THE REPOSITORIES ARE ONLY NEEDED TO ACCESS TO THE
+	     SNAPSHOT VERSIONS OF SARL AND JANUS -->
+	<repositories>
+		<repository>
+			<id>io.sarl.maven</id>
+			<name>Sarl.io Snapshots</name>
+			<url>http://maven.sarl.io/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>io.janus-project.maven</id>
+			<name>Janusproject.io Snapshots</name>
+			<url>http://maven.janusproject.io</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>io.sarl.maven</id>
+			<name>Sarl.io Snapshots</name>
+			<url>http://maven.sarl.io/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
 

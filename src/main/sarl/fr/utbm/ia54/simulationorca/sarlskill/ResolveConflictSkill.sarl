@@ -1,9 +1,19 @@
 package fr.utbm.ia54.simulationorca.sarlskill
 
+import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody
 import fr.utbm.ia54.simulationorca.sarlcapacity.ResolveConflictCapacity
+import fr.utbm.ia54.simulationorca.sarlevent.InfluenceEvent
+import io.sarl.lang.core.Address
+import java.util.List
+import java.util.Map
 
 skill ResolveConflictSkill implements ResolveConflictCapacity {
-	def resolveConflict {
-		
+	def resolveConflict(influences : List<InfluenceEvent>, bodies : Map<Address,AgentBody>) {
+		for(influence : influences) {
+			var body = bodies.get(influence.source)
+			if (body !== null) {
+				body.position = influence.bodyPos
+			}
+		}
 	}
 }
