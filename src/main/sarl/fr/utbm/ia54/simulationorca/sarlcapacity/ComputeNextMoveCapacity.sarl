@@ -5,6 +5,6 @@ import fr.utbm.ia54.simulationorca.framework.Vector
 
 capacity ComputeNextMoveCapacity {
 	
-	def nextMove(bodyPos: Vector, perceptions : List<Object>) : Vector
+	def nextMove( perceptions : List<Object>) : Vector
 	
 }

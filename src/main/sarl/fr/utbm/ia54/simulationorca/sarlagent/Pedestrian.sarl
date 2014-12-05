@@ -22,7 +22,7 @@ agent Pedestrian {
 		initialPosition = occurrence.parameters.get(0) as Vector
 		finalPostition = occurrence.parameters.get(1) as Vector
 
-		var skillORCA = new ComputeORCASkill
+		var skillORCA = new ComputeORCASkill(initialPosition,finalPostition)
 		setSkill(ComputeNextMoveCapacity,skillORCA)
 	}
 	
@@ -30,7 +30,7 @@ agent Pedestrian {
 		println("in PerceptionReceivedEvent")
 		
 		// Compute next move using ORCA algorithm
-		var newPos : Vector = nextMove(occurrence.bodyPos, occurrence.perceptions)
+		var newPos : Vector = nextMove( occurrence.perceptions)
 		
 		// Send computed position to the environment
 		// selected scope only send the Influence event to the source 

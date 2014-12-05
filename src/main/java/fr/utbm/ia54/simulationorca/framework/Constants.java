@@ -17,6 +17,7 @@ public final class Constants  {
 	public static final int TIMEOUT = 1000;
 	public static final float VELOCITY = (float) 0.8;
 	public static final int PRECEPTION_DISTANCE = 100;
+	public static final float EPSILON = 0.00001f;
 	
 
 }

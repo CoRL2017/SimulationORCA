@@ -54,6 +54,10 @@ public class Vector {
 		return x*b.y -y*b.x;
 	}
 	
+	public Vector normalize(){
+		return divide(abs());
+	}
+	
 	
 	public float getX() {
 		return x;

@@ -10,8 +10,17 @@ import fr.utbm.ia54.simulationorca.sarlcapacity.ComputeNextMoveCapacity
 import fr.utbm.ia54.simulationorca.framework.Vector
 
 skill ComputeORCASkill implements ComputeNextMoveCapacity {
+	var bodyPos : Vector
+	var finalPos : Vector
 	
-	def nextMove (bodyPos : Vector, perceptions : List<Object> ): Vector {
+	new (pos : Vector,final : Vector) {
+	    super() // Call the super's constructor
+	    bodyPos=pos
+	    finalPos=final
+	}
+	
+	def nextMove ( perceptions : List<Object> ): Vector {
+		
 		var obstacles : List<Obstacle> = new ArrayList<Obstacle>
 		var neighbours : List<Vector> = new ArrayList<Vector>
 	
@@ -32,8 +41,37 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 //		println("Taille liste obstacles :" + obstacles.size)
 //		println("Taille liste voisins :" + neighbours.size)
 		
-		var newPos = new Vector( (Math.random()*500 +1) as int,(Math.random()*500 +1) as int)
 		
+		
+		var orcaLines = new ArrayList<Line>
+		
+		orcaLines+=orcaLinesFor0bstacles(obstacles)
+		var numObstLines = orcaLines.size
+		orcaLines+=orcaLinesForNeighbours(neighbours)
+		
+		//Velocity pour maxSpeed dans code c++
+		var lineFail = linearProgram2(orcaLines, Constants.VELOCITY, finalPos, false);
+		
+		if (lineFail < orcaLines.size) {
+			linearProgram3(orcaLines, numObstLines, lineFail, Constants.VELOCITY);
+		}
+	
+		//bodyPos = new Vector( (Math.random()*500 +1) as int,(Math.random()*500 +1) as int)
+		return bodyPos
+	}
+	
+	def orcaLinesFor0bstacles( obstacles :List<Obstacle> ):List<Line>{
+		var orcaLines = new ArrayList<Line>
+		
+		for (obstacle : obstacles){
+			
+		}
+		
+		
+		return orcaLines;
+	}
+	
+	def orcaLinesForNeighbours( neighbours : List<Vector>):List<Line>{
 		var orcaLines = new ArrayList<Line>
 		
 		for (neighbour : neighbours){
@@ -56,13 +94,15 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 					var unitW = w.divide(wLength)
 					line.direction = new Vector(unitW.y, -unitW.x)
 					u = unitW.prod(combinedRadius - wLength)
-				} else {
+				} 
+				else {
 					var leg = Math.sqrt(distSq - combinedRadiusSq) as float
 					
 					if(relativePosition.det(w)>0){
 						var temp = new Vector(relativePosition.x * leg - relativePosition.y * combinedRadius, relativePosition.x * leg + relativePosition.y * combinedRadius)
 						line.direction = temp.divide(distSq)
-					} else {
+					} 
+					else {
 						var temp = new Vector(relativePosition.x * leg + relativePosition.y * combinedRadius, -relativePosition.x * leg + relativePosition.y * combinedRadius)
 						temp = temp.prod(-1)
 						line.direction = temp.divide(distSq)
@@ -71,7 +111,8 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 					// var dotProduct2 =
 					u = new Vector(0,0)
 				}
-			} else {
+			} 
+			else {
 				// Collision
 				var invTimeStep : float = 1/(Constants.TIMEOUT as float)
 				var w = relativePosition.prod(-invTimeStep)
@@ -84,7 +125,169 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 			line.point = (u.prod(0.5 as float)).plus(Constants.VELOCITY)
 			orcaLines.add(line)
 		}
-		
-		return newPos
+		return orcaLines;
 	}
+	
+	
+	def linearProgram1(lines :List<Line>,lineNo:int,radius :float, optVelocity:Vector,directionOpt:boolean ):boolean{
+		var point=lines.get(lineNo).point
+		var direction=lines.get(lineNo).direction
+		
+		var dotProduct=point.prod(direction)
+		var discriminant=dotProduct*dotProduct + radius*radius -point.absSq
+		
+		if (discriminant < 0) {
+			/* Max speed circle fully invalidates line lineNo. */
+			return false;
+		}
+		
+		var sqrtDiscriminant = Math.sqrt(discriminant) as float;
+		var tLeft = -dotProduct - sqrtDiscriminant;
+		var tRight = -dotProduct + sqrtDiscriminant;
+		
+		for(var i=0;i<lineNo;i++){
+			 var denominator = direction.det(lines.get(i).direction);
+			 var numerator = lines.get(i).direction.det(point.minus(lines.get(i).point));
+			 
+			 if(Math.abs(denominator)<= Constants.EPSILON){
+			 	/* Lines lineNo and i are (almost) parallel. */
+				if (numerator < 0.0f) {
+					return false;
+				}
+			 }
+			 else{
+			 	var t = numerator/denominator;
+			 	if (denominator >= 0) {
+					/* Line i bounds line lineNo on the right. */
+					tRight = Math.min(tRight, t);
+				}
+				else {
+					/* Line i bounds line lineNo on the left. */
+					tLeft = Math.max(tLeft, t);
+				}
+				
+				if (tLeft > tRight) {
+					return false;
+				}
+			 }
+		}
+		
+		if (directionOpt) {
+			/* Optimize direction. */
+			if (optVelocity.prod(direction) > 0){
+				/* Take right extreme. */
+				bodyPos = point.plus(direction.prod(tRight));
+			}
+			else {
+				/* Take left extreme. */
+				bodyPos = point.plus(direction.prod(tLeft))
+			}
+		}
+		else {
+			/* Optimize closest point. */
+			var t = direction.prod(optVelocity.minus(point));
+			
+			if (t < tLeft) {
+				bodyPos = point.plus(direction.prod(tLeft));
+			}
+			else if (t > tRight) {
+				bodyPos = point.plus(direction.prod(tRight));
+			}
+			else {
+				bodyPos = point.plus(direction.prod(t));
+			}
+		}
+		
+		return true;
+	}
+	
+	def linearProgram2(lines :List<Line>,radius :float, optVelocity:Vector,directionOpt:boolean ):int {
+		if (directionOpt) {
+			/*
+			 * Optimize direction. Note that the optimization velocity is of unit
+			 * length in this case.
+			 */
+			bodyPos = optVelocity.prod(radius);
+		}
+		else if (optVelocity.absSq > radius*radius) {
+			/* Optimize closest point and outside circle. */
+			bodyPos = (optVelocity.normalize).prod(radius);
+		}
+		else {
+			/* Optimize closest point and inside circle. */
+			bodyPos = optVelocity;
+		}
+		
+		
+		for(var i=0;i<lines.size;i++){
+			var direction=lines.get(i).direction
+			var point=lines.get(i).point
+			if(direction.det(point.minus(bodyPos))>0){
+				/* Result does not satisfy constraint i. Compute new optimal result. */
+				var tempBodyPos=bodyPos
+				if(!linearProgram1(lines, i, radius, optVelocity, directionOpt)){
+					bodyPos=tempBodyPos
+					return i;
+				}
+			}
+		}
+		
+		return lines.size;
+		
+	}
+	
+	def linearProgram3(lines:List<Line>, numObstLines:int,beginLine:int,radius:float){
+		var distance = 0.0 as float;
+		
+		for (var i = beginLine; i < lines.size();i++) {
+			var directionI=lines.get(i).direction
+			var pointI=lines.get(i).point
+		
+			if (directionI.det(pointI.minus(bodyPos))> distance) {
+				/* Result does not satisfy constraint of line i. */
+				var projLines=new ArrayList<Line>
+				projLines+=lines.get(0)
+				projLines+=lines.get(numObstLines)
+				
+				for (var j = numObstLines; j < i; j++) {
+					var line =new Line
+					var directionJ=lines.get(j).direction
+					var pointJ=lines.get(j).point
+					var determinant = directionI.det(directionJ)
+					
+					if (Math.abs(determinant) <= Constants.EPSILON) {
+						/* Line i and line j are parallel. */
+						if (directionI.prod(directionJ) <= 0.0f) {
+							/* Line i and line j point in opposite direction. */
+							line.point = (pointI.plus(pointJ)).prod(0.5 as float)
+							
+							line.direction = (directionJ.minus(directionI)).normalize
+							projLines+=line; 
+						}
+					}
+					else{
+						var coef= directionJ.det(pointI.minus(pointJ))/determinant
+						line.point = pointI.plus(directionI.prod(coef))
+						
+						line.direction = (directionJ.minus(directionI)).normalize
+						projLines+=line; 
+					}
+					
+				}
+				
+				var tempBodyPos=bodyPos
+				var vector = new Vector(-directionI.y, directionI.x)
+
+				if (linearProgram2(projLines, radius, vector, true) < projLines.size) {
+					bodyPos=tempBodyPos
+				}
+				
+				distance = directionI.det(pointI.minus(bodyPos))
+				
+			}
+				
+		}
+	}
+	
+	
 }
