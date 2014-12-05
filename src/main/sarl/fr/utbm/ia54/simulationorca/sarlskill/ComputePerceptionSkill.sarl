@@ -5,13 +5,13 @@ import java.util.List
 import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle
 import java.util.Collection
 import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody
-import fr.utbm.ia54.simulationorca.framework.Position
 import fr.utbm.ia54.simulationorca.framework.Constants
 import java.util.ArrayList
+import fr.utbm.ia54.simulationorca.framework.Vector
 
 skill ComputePerceptionSkill implements ComputePerceptionCapacity{
 	
-	def computePerception(bodyPos : Position, agentBodies : Collection<AgentBody>, obstacles : Collection<Obstacle>) : List<Object> {
+	def computePerception(bodyPos : Vector, agentBodies : Collection<AgentBody>, obstacles : Collection<Obstacle>) : List<Object> {
 
 		var perceptions = new ArrayList<Object>
 

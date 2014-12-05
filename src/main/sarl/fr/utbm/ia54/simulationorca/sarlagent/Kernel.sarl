@@ -5,12 +5,12 @@ import io.sarl.core.DefaultContextInteractions
 import io.sarl.core.Lifecycle
 import java.util.List
 import java.util.ArrayList
-import fr.utbm.ia54.simulationorca.framework.Position
 import io.sarl.lang.core.Address
 import fr.utbm.ia54.simulationorca.framework.XMLParser
 import fr.utbm.ia54.simulationorca.gui.SimulationFrame
 import java.util.HashSet
 import fr.utbm.ia54.simulationorca.framework.Constants
+import fr.utbm.ia54.simulationorca.framework.Vector
 
 agent Kernel {
 	
@@ -25,7 +25,7 @@ agent Kernel {
 		killMe	
 	}
 	
-	def spawnPedestrians(listInitialPedestrianPositions : List<Position>, listFinalPedestrianPositions : List<Position>) : List<Address> {
+	def spawnPedestrians(listInitialPedestrianPositions : List<Vector>, listFinalPedestrianPositions : List<Vector>) : List<Address> {
 		var listPedestrianAddresses : List<Address> = new ArrayList<Address>()
 		
 		for (var i=0; i<listInitialPedestrianPositions.size(); i++) {

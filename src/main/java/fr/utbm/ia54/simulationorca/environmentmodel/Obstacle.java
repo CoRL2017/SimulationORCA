@@ -1,24 +1,61 @@
 package fr.utbm.ia54.simulationorca.environmentmodel;
 
-import fr.utbm.ia54.simulationorca.framework.Position;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
+import fr.utbm.ia54.simulationorca.framework.Vector;
 
 public final class Obstacle extends EnvironmentObject{
 
-	private Position posA;
-	private Position posB;
-
-	public Obstacle(Position posA, Position posB){
-		this.posA = posA;
-		this.posB = posB;
+	private List<Vector> segments;
+	
+	public Obstacle(List<Vector> l){
+		this.segments=l;
+	}
+	
+	public Obstacle() {
+		segments = new ArrayList<Vector>();
 	}
 
-	public Position getPosA() {
-		return posA;
+	public void addSegment(Vector v){
+		segments.add(v);
+	}
+	
+	public void removeSegment(Vector v){
+		segments.remove(v);
+	}
+	
+	public Vector next(Vector v){
+		ListIterator<Vector> it= segments.listIterator();
+		
+		while(!it.equals(v)){
+			it.next();
+		}
+		
+		if(it.nextIndex()<segments.size()){
+			return it.next();
+		}
+		else{
+			return segments.get(0);
+		}
 	}
 
-	public Position getPosB() {
-		return posB;
+	public Vector previous(Vector v){
+		ListIterator<Vector> it= segments.listIterator();
+		
+		while(!it.equals(v)){
+			it.next();
+		}
+		
+		if(it.previousIndex()>-1){
+			return it.previous();
+		}
+		else{
+			return segments.get(segments.size()-1);
+		}
 	}
+	
 	
 	private static float projectsPointOnLine(float px, float py, float s1x, float s1y, float s2x, float s2y) {
 		float r_numerator = (px-s1x)*(s2x-s1x) + (py-s1y)*(s2y-s1y);
@@ -38,15 +75,48 @@ public final class Obstacle extends EnvironmentObject{
 		return v;
 	}
 
-	public float distanceTo(Position p) {
-		float ratio = projectsPointOnLine(p.getX(), p.getY(),
-				getPosA().getX(), getPosA().getY(),
-				getPosB().getX(), getPosB().getY());
-		ratio = clamp(ratio, 0f, 1f);
-		float vx = ratio * (getPosB().getX() - getPosA().getX());
-		float vy = ratio * (getPosB().getY() - getPosA().getY());
-		return Math.abs(getPosA().getX() + vx - p.getX())
-				+ Math.abs(getPosA().getY() + vy - p.getY());
+	public float distanceTo(Vector p) {
+		float dist=1000;
+		float distTemp=0;
+		for(int i=0;i<segments.size();i++){
+			if(i<segments.size()-1){
+				float ratio = projectsPointOnLine(p.getX(), p.getY(),
+						segments.get(i).getX(), segments.get(i).getY(),
+						segments.get(i+1).getX(), segments.get(i+1).getY());
+				ratio = clamp(ratio, 0f, 1f);
+				float vx = ratio * (segments.get(i+1).getX() - segments.get(i).getX());
+				float vy = ratio * (segments.get(i+1).getY() - segments.get(i).getY());
+				distTemp= Math.abs(segments.get(i).getX() + vx - p.getX())
+						+ Math.abs(segments.get(i).getY() + vy - p.getY());
+			}
+			else{
+				float ratio = projectsPointOnLine(p.getX(), p.getY(),
+						segments.get(i).getX(), segments.get(i).getY(),
+						segments.get(0).getX(), segments.get(0).getY());
+				ratio = clamp(ratio, 0f, 1f);
+				float vx = ratio * (segments.get(0).getX() - segments.get(i).getX());
+				float vy = ratio * (segments.get(0).getY() - segments.get(i).getY());
+				distTemp= Math.abs(segments.get(i).getX() + vx - p.getX())
+						+ Math.abs(segments.get(i).getY() + vy - p.getY());
+			}
+			
+			if(distTemp<dist){
+				dist=distTemp;
+			}
+		}
+		return dist;
+	}
+
+
+
+	public List<Vector> getSegments() {
+		return segments;
+	}
+
+
+
+	public void setSegments(List<Vector> segments) {
+		this.segments = segments;
 	}
 	
 }

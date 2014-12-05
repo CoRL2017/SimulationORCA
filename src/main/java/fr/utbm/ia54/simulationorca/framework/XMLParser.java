@@ -13,8 +13,8 @@ public class XMLParser {
 
 	private final String filepath;
 	
-	private List<Position> listInitialPositionPedestrians = new ArrayList<Position>();
-	private List<Position> listFinalPositionPedestrians = new ArrayList<Position>();
+	private List<Vector> listInitialPositionPedestrians = new ArrayList<Vector>();
+	private List<Vector> listFinalPositionPedestrians = new ArrayList<Vector>();
 	private List<Obstacle> listObstacles = new ArrayList<Obstacle>();
 	
 	public XMLParser(String filepath){	
@@ -53,8 +53,8 @@ public class XMLParser {
 					line = line.replace("<pedestrian>", "");
 					line = line.replace("</pedestrian>", "");
 					String[] positionValues = line.split(",");
-					listInitialPositionPedestrians.add(new Position(Integer.parseInt(positionValues[0]), Integer.parseInt(positionValues[1])));
-					listFinalPositionPedestrians.add(new Position(Integer.parseInt(positionValues[2]), Integer.parseInt(positionValues[3])));
+					listInitialPositionPedestrians.add(new Vector(Integer.parseInt(positionValues[0]), Integer.parseInt(positionValues[1])));
+					listFinalPositionPedestrians.add(new Vector(Integer.parseInt(positionValues[2]), Integer.parseInt(positionValues[3])));
 				}
 			}
 		} catch (IOException e) {
@@ -73,7 +73,13 @@ public class XMLParser {
 					line = line.replace("<obstacle>", "");
 					line = line.replace("</obstacle>", "");
 					String[] positionValues = line.split(",");
-					listObstacles.add(new Obstacle(new Position(Integer.parseInt(positionValues[0]), Integer.parseInt(positionValues[1])), new Position(Integer.parseInt(positionValues[2]), Integer.parseInt(positionValues[3]))));
+					Obstacle obsTemp = new Obstacle();
+					for(int i = 0; i<positionValues.length; i=i+2){
+						obsTemp.addSegment(new Vector(Integer.parseInt(positionValues[i]), Integer.parseInt(positionValues[i+1])));						
+					}
+					listObstacles.add(obsTemp);
+					
+					//listObstacles.add(new Obstacle(new Vector(Integer.parseInt(positionValues[0]), Integer.parseInt(positionValues[1])), new Vector(Integer.parseInt(positionValues[2]), Integer.parseInt(positionValues[3]))));
 				}
 			}
 		} catch (IOException e) {
@@ -87,11 +93,11 @@ public class XMLParser {
 		return line.trim();
 	}
 	
-	public List<Position> getListInitialPositionPedestrians() {
+	public List<Vector> getListInitialPositionPedestrians() {
 		return listInitialPositionPedestrians;
 	}
 	
-	public List<Position> getListFinalPositionPedestrians() {
+	public List<Vector> getListFinalPositionPedestrians() {
 		return listFinalPositionPedestrians;
 	}
 	

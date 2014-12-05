@@ -14,12 +14,12 @@
 
 <environment>
 	<obstacles>
-<!-- 		<obstacle>50,50,100,50,100,0,50,0</obstacle> -->
+		<obstacle>50,50,100,50,100,0,50,0</obstacle>
 
-		<obstacle>50,50,100,50</obstacle>
-		<obstacle>100,50,100,0</obstacle>
-		<obstacle>100,0,50,0</obstacle>
-		<obstacle>50,0,50,50</obstacle>
+<!-- 		<obstacle>50,50,100,50</obstacle> -->
+<!-- 		<obstacle>100,50,100,0</obstacle> -->
+<!-- 		<obstacle>100,0,50,0</obstacle> -->
+<!-- 		<obstacle>50,0,50,50</obstacle> -->
 	</obstacles>
 	<pedestrians>
 		<pedestrian>10,10,100,100</pedestrian>

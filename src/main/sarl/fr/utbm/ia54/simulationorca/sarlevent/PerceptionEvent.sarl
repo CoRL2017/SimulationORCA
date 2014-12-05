@@ -1,14 +1,14 @@
 package fr.utbm.ia54.simulationorca.sarlevent
 
 import java.util.List
-import fr.utbm.ia54.simulationorca.framework.Position
+import fr.utbm.ia54.simulationorca.framework.Vector
 
 event PerceptionEvent {
 	
-	var bodyPos : Position
+	var bodyPos : Vector
 	var perceptions : List<Object>
  	
-	new (bodyPos : Position, perceptions : List<Object> ){
+	new (bodyPos : Vector, perceptions : List<Object> ){
 		this.bodyPos = bodyPos
 		this.perceptions = perceptions
 	}

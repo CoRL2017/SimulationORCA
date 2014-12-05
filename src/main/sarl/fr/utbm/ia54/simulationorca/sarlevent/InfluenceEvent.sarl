@@ -1,12 +1,12 @@
 package fr.utbm.ia54.simulationorca.sarlevent
 
-import fr.utbm.ia54.simulationorca.framework.Position
+import fr.utbm.ia54.simulationorca.framework.Vector
 
 event InfluenceEvent {
 	// TODO: Uitiliser des vecteurs dans les infuences
-	var bodyPos:Position
+	var bodyPos:Vector
  	
-	new(bodyPos : Position){
+	new(bodyPos : Vector){
 		this.bodyPos = bodyPos
 	}
 }

@@ -15,7 +15,6 @@ public class XMLParserTest extends TestCase {
 		System.out.println("Taille liste obstacles : " + xmlParser.getListObstacles().size());
 		
 		for(Obstacle obs : xmlParser.getListObstacles()){
-			System.out.println("Obstacle " + obs.getPosA().getX());
 		}
 	}
 

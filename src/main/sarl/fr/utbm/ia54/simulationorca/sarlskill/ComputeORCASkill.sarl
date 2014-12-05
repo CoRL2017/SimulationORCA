@@ -1,24 +1,27 @@
 package fr.utbm.ia54.simulationorca.sarlskill
 
-import fr.utbm.ia54.simulationorca.framework.Position
 import java.util.List
 import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle
 import java.util.ArrayList
+
+import fr.utbm.ia54.simulationorca.framework.Constants
+import fr.utbm.ia54.simulationorca.framework.Line
 import fr.utbm.ia54.simulationorca.sarlcapacity.ComputeNextMoveCapacity
+import fr.utbm.ia54.simulationorca.framework.Vector
 
 skill ComputeORCASkill implements ComputeNextMoveCapacity {
 	
-	def nextMove (bodyPos : Position, perceptions : List<Object> ): Position {
+	def nextMove (bodyPos : Vector, perceptions : List<Object> ): Vector {
 		var obstacles : List<Obstacle> = new ArrayList<Obstacle>
-		var neighbours : List<Position> = new ArrayList<Position>
+		var neighbours : List<Vector> = new ArrayList<Vector>
 	
-		for (elt as Object : perceptions){
+		for (elt : perceptions){
 			switch (elt.class) {
 					case typeof(Obstacle) : { 
 						obstacles.add(elt as Obstacle);
 					} 
-					case typeof(Position) : {
-						neighbours.add(elt as Position);
+					case typeof(Vector) : {
+						neighbours.add(elt as Vector);
 					}
 					default : {
 						println("Unknown type in perception list")
@@ -26,9 +29,62 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 			}
 		}
 		
-		println("Taille liste obstacles :" + obstacles.size)
-		println("Taille liste voisins :" + neighbours.size)
-		var newPos : Position = new Position( (Math.random()*500 +1) as int,(Math.random()*500 +1) as int)
+//		println("Taille liste obstacles :" + obstacles.size)
+//		println("Taille liste voisins :" + neighbours.size)
+		
+		var newPos = new Vector( (Math.random()*500 +1) as int,(Math.random()*500 +1) as int)
+		
+		var orcaLines = new ArrayList<Line>
+		
+		for (neighbour : neighbours){
+			var relativePosition = neighbour.minus(bodyPos)
+			var distSq = relativePosition.absSq()
+			var line =new Line
+			var u : Vector
+			
+			var combinedRadius = Constants.PEDSTRIAN_CIRCLE_DIAMETER as float
+			var combinedRadiusSq = Constants.PEDSTRIAN_CIRCLE_DIAMETER*Constants.PEDSTRIAN_CIRCLE_DIAMETER as float
+			if(distSq > combinedRadiusSq){
+				// No collision
+				var w = relativePosition.prod(-1)
+				var wLengthSq = w.absSq()
+				
+				var dotProduct1 : float = w.prod(relativePosition)
+				
+				if(dotProduct1 < 0 && dotProduct1*dotProduct1 > combinedRadiusSq * wLengthSq){
+					var wLength = Math.sqrt(wLengthSq) as float
+					var unitW = w.divide(wLength)
+					line.direction = new Vector(unitW.y, -unitW.x)
+					u = unitW.prod(combinedRadius - wLength)
+				} else {
+					var leg = Math.sqrt(distSq - combinedRadiusSq) as float
+					
+					if(relativePosition.det(w)>0){
+						var temp = new Vector(relativePosition.x * leg - relativePosition.y * combinedRadius, relativePosition.x * leg + relativePosition.y * combinedRadius)
+						line.direction = temp.divide(distSq)
+					} else {
+						var temp = new Vector(relativePosition.x * leg + relativePosition.y * combinedRadius, -relativePosition.x * leg + relativePosition.y * combinedRadius)
+						temp = temp.prod(-1)
+						line.direction = temp.divide(distSq)
+					}
+					// TODO problème -> relative velocity toujours nul 
+					// var dotProduct2 =
+					u = new Vector(0,0)
+				}
+			} else {
+				// Collision
+				var invTimeStep : float = 1/(Constants.TIMEOUT as float)
+				var w = relativePosition.prod(-invTimeStep)
+				
+				var wLength = w.abs()
+				var unitW = w.divide(wLength)
+				line.direction = new Vector(unitW.y, -unitW.x)
+				u = unitW.prod(combinedRadius * invTimeStep - wLength)				
+			}
+			line.point = (u.prod(0.5 as float)).plus(Constants.VELOCITY)
+			orcaLines.add(line)
+		}
+		
 		return newPos
 	}
 }

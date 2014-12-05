@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.JFrame;
@@ -12,6 +13,7 @@ import javax.swing.JPanel;
 import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody;
 import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle;
 import fr.utbm.ia54.simulationorca.framework.Constants;
+import fr.utbm.ia54.simulationorca.framework.Vector;
 
 public class SimulationFrame extends JFrame implements EnvironmentListener {
 
@@ -43,7 +45,17 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 				if( obstacles != null){
 					for(Obstacle obs : obstacles){
 						graphics.setColor(Color.white);
-						graphics.drawLine(obs.getPosA().getX(), obs.getPosA().getY(), obs.getPosB().getX(), obs.getPosB().getY());
+						List<Vector> segments=obs.getSegments();
+						for(int i=0;i<segments.size();i++){
+							if(i<segments.size()-1){
+								graphics.drawLine((int)segments.get(i).getX(),(int) segments.get(i).getY(), (int)segments.get(i+1).getX(), (int)segments.get(i+1).getY());
+							}
+							else{
+								graphics.drawLine((int)segments.get(i).getX(),(int) segments.get(i).getY(), (int)segments.get(0).getX(), (int)segments.get(0).getY());
+							}
+							
+						}
+						
 					} 					
 				} else {
 					System.out.println("SimulationFrame - No obstacle to be drawn");
@@ -53,7 +65,7 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 				if( pedestrianBodies != null){
 					for(AgentBody body : pedestrianBodies){
 						graphics.setColor(Color.cyan);
-						graphics.drawOval(body.getPosition().getX(), body.getPosition().getY(), Constants.PEDSTRIAN_CIRCLE_DIAMETER, Constants.PEDSTRIAN_CIRCLE_DIAMETER);
+						graphics.drawOval((int)body.getPosition().getX(), (int)body.getPosition().getY(), Constants.PEDSTRIAN_CIRCLE_DIAMETER, Constants.PEDSTRIAN_CIRCLE_DIAMETER);
 					}					
 				} else {
 					System.out.println("SimulationFrame - No pedestrian to be drawn");

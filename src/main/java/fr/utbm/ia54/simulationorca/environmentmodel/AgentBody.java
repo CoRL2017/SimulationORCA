@@ -1,14 +1,14 @@
 package fr.utbm.ia54.simulationorca.environmentmodel;
 
-import fr.utbm.ia54.simulationorca.framework.Position;
+import fr.utbm.ia54.simulationorca.framework.Vector;
 import io.sarl.lang.core.Address;
 
 public class AgentBody extends EnvironmentObject{
 
-	private Position position;
+	private Vector position;
 	private Address pedestrianAddress;
 	
-	public AgentBody(Address address, Position position){
+	public AgentBody(Address address, Vector position){
 		this.pedestrianAddress = address;
 		this.position = position;
 	}
@@ -21,11 +21,11 @@ public class AgentBody extends EnvironmentObject{
 		this.pedestrianAddress = pedestrianAddress;
 	}
 
-	public Position getPosition() {
+	public Vector getPosition() {
 		return position;
 	}
 
-	public void setPosition(Position position) {
+	public void setPosition(Vector position) {
 		this.position = position;
 	}
 }
