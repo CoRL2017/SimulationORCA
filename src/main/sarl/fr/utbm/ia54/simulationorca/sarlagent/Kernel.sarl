@@ -1,8 +1,6 @@
 package fr.utbm.ia54.simulationorca.sarlagent
 
 import io.sarl.core.Initialize
-import io.sarl.core.DefaultContextInteractions
-import io.sarl.core.Lifecycle
 import java.util.List
 import java.util.ArrayList
 import io.sarl.lang.core.Address
@@ -11,15 +9,17 @@ import fr.utbm.ia54.simulationorca.gui.SimulationFrame
 import java.util.HashSet
 import fr.utbm.ia54.simulationorca.framework.Constants
 import fr.utbm.ia54.simulationorca.framework.Vector
+import io.sarl.core.DefaultContextInteractions
+import io.sarl.core.Lifecycle
 
 agent Kernel {
 	
-	uses DefaultContextInteractions, Lifecycle
+	uses Lifecycle, DefaultContextInteractions
 	
 	on Initialize {			
 		var xmlParser : XMLParser = new XMLParser(Constants.XML_STRUCTURE_FILEPATH)
 		var listPedestrianAddresses = spawnPedestrians(xmlParser.listInitialPositionPedestrians, xmlParser.listFinalPositionPedestrians )
-		var listener : SimulationFrame = new SimulationFrame(new HashSet(xmlParser.listObstacles))
+		var listener : SimulationFrame = new SimulationFrame(new HashSet(xmlParser.listObstacles), new HashSet(xmlParser.listFinalPositionPedestrians))
 		spawn(Environment, #[listPedestrianAddresses, xmlParser.listInitialPositionPedestrians, xmlParser.listObstacles, listener])
 		
 		killMe	
@@ -29,7 +29,7 @@ agent Kernel {
 		var listPedestrianAddresses : List<Address> = new ArrayList<Address>()
 		
 		for (var i=0; i<listInitialPedestrianPositions.size(); i++) {
-			var id = spawn(Pedestrian, #[listInitialPedestrianPositions.get(i), listFinalPedestrianPositions.get(i)])
+			var id = spawn(typeof(Pedestrian), #[listInitialPedestrianPositions.get(i), listFinalPedestrianPositions.get(i)])
 			listPedestrianAddresses.add(defaultSpace.getAddress(id))
 		}
 		

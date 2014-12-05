@@ -7,5 +7,7 @@ import java.util.Collection
 import fr.utbm.ia54.simulationorca.framework.Vector
 
 capacity ComputePerceptionCapacity{	
+	
 	def computePerception(bodyPos : Vector, agentBodies : Collection<AgentBody>, obstacles : Collection<Obstacle>) : List<Object> 
+	
 }

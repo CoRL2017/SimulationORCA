@@ -14,11 +14,12 @@ skill ComputePerceptionSkill implements ComputePerceptionCapacity{
 	def computePerception(bodyPos : Vector, agentBodies : Collection<AgentBody>, obstacles : Collection<Obstacle>) : List<Object> {
 
 		var perceptions = new ArrayList<Object>
-
+		
 		for(neighbour as AgentBody : agentBodies){
-			if(bodyPos.distanceTo(neighbour.getPosition()) < Constants.PRECEPTION_DISTANCE){
-				// Add the position of every agent close enough to the perception list
-				perceptions += neighbour.position
+			// If considered agent is at perception distance and is not the agent himself
+			if(bodyPos.distanceTo(neighbour.getPosition()) < Constants.PRECEPTION_DISTANCE && !bodyPos.equals(neighbour.getPosition())){
+				// Add its position to the perception list
+				perceptions += neighbour
 			}
 		}
 		for(obstacle as Obstacle : obstacles){

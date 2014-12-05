@@ -3,10 +3,10 @@ package fr.utbm.ia54.simulationorca.sarlevent
 import fr.utbm.ia54.simulationorca.framework.Vector
 
 event InfluenceEvent {
-	// TODO: Uitiliser des vecteurs dans les infuences
-	var bodyPos:Vector
+	
+	var movement : Vector
  	
-	new(bodyPos : Vector){
-		this.bodyPos = bodyPos
+	new (movement : Vector){
+		this.movement = movement
 	}
 }

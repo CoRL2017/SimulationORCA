@@ -2,9 +2,10 @@ package fr.utbm.ia54.simulationorca.sarlcapacity
 
 import java.util.List
 import fr.utbm.ia54.simulationorca.framework.Vector
+import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody
 
 capacity ComputeNextMoveCapacity {
 	
-	def nextMove( perceptions : List<Object>) : Vector
+	def nextMove( perception : List<Object>, body : AgentBody ) : Vector
 	
 }

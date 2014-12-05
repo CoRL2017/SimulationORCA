@@ -2,12 +2,10 @@ package fr.utbm.ia54.simulationorca.sarlagent
 
 import io.sarl.core.DefaultContextInteractions
 import io.sarl.core.Initialize
-import io.sarl.core.Lifecycle
 import java.util.List
 import io.sarl.lang.core.Address
 import fr.utbm.ia54.simulationorca.framework.Constants
 import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody
-
 import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle
 import fr.utbm.ia54.simulationorca.sarlevent.PerceptionEvent
 import io.sarl.util.Scopes
@@ -28,17 +26,16 @@ import java.util.ArrayList
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.TreeMap
 import fr.utbm.ia54.simulationorca.framework.Vector
+import fr.utbm.ia54.simulationorca.environmentmodel.TimeManager
 
 agent Environment{
 	
-	uses DefaultContextInteractions, Lifecycle, Behaviors,ComputePerceptionCapacity,ResolveConflictCapacity,UpdateEnvironmentCapacity,Schedules
+	uses DefaultContextInteractions, Behaviors,ComputePerceptionCapacity,ResolveConflictCapacity,UpdateEnvironmentCapacity,Schedules
 	
 	var hashAgentBodies = new TreeMap<Address,AgentBody>
 	var listListeners = new ArrayList<EnvironmentListener>
 	var listObstacles : List<Obstacle>
-	
 	var receivedInfluences = <InfluenceEvent>newArrayList
-	
 	var fireStepEvent = new AtomicBoolean(false)
 	
 	on Initialize{
@@ -54,7 +51,6 @@ agent Environment{
 		listObstacles = occurrence.parameters.get(2) as List<Obstacle>
 		spawnPedestrianBodies(occurrence.parameters.get(0) as List<Address>, occurrence.parameters.get(1) as List<Vector>)
 		listListeners.add(occurrence.parameters.get(3) as EnvironmentListener)
-		
 		
 		fireUpdateFrame
 		
@@ -73,9 +69,8 @@ agent Environment{
 		for (body : hashAgentBodies.values()) {
 		 	//use the skill computePerception
 			var perceptions = computePerception(body.position, hashAgentBodies.values(), listObstacles)
-			emit(new PerceptionEvent(body.position, perceptions),Scopes.addresses(body.pedestrianAddress))
+			emit(new PerceptionEvent(body, perceptions),Scopes.addresses(body.pedestrianAddress))
 		}
-		
 		
 		fireStepEvent.set(true)
 	}
@@ -84,6 +79,9 @@ agent Environment{
 		fireStepEvent.set(false)
 	
 		println("in EndOfStepEvent")
+		
+		TimeManager.incrementTime
+		println("time = " + TimeManager.time)
 		//use skill ResolveConflictSkill
 		resolveConflict(receivedInfluences, hashAgentBodies)
 		receivedInfluences.clear
