@@ -58,7 +58,17 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 		
 		var maxSpeed = Constants.MAX_SPEED //XXX what is this thing ...
 		
-		var lineFail = linearProgram2(orcaLines, maxSpeed, finalPos, false); // XXX finalPos = prefVelocity ?
+		/*
+		 *  XXX finalPos = prefVelocity ?  
+		 *  non j'avais lu trop vite: voir dans exampleBlock.cpp setPreferredVelocities() ligne 161
+		 *  prefVelocity = finalPos-BodyPos (a normaliser au besoin)
+		 */
+		var prefVelocity=finalPos.minus(bodyPos)
+		if (prefVelocity.absSq > 1.0f) {
+			prefVelocity = prefVelocity.normalize;
+		}
+		
+		var lineFail = linearProgram2(orcaLines, maxSpeed,prefVelocity , false); 
 		
 		if (lineFail < orcaLines.size) {
 			linearProgram3(orcaLines, numObstLines, lineFail, maxSpeed);
