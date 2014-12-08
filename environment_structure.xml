@@ -18,6 +18,7 @@
 	</obstacles>
 	<pedestrians>
 		<pedestrian>150,150,300,300</pedestrian>
-		<pedestrian>300,300,150,150</pedestrian>
+		<pedestrian>300,150,150,300</pedestrian>
+		<pedestrian>300,300,150,150</pedestrian> 
 	</pedestrians>
 </environment>

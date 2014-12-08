@@ -23,7 +23,7 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 	}
 	
 	def nextMove (perceptions : List<Object>, body : AgentBody): Vector {
-		
+
 //		bodyPos = new Vector( (Math.random()*500 +1) as int,(Math.random()*500 +1) as int)
 		var obstacles = new ArrayList<Obstacle>
 		var neighbours = new ArrayList<AgentBody>
@@ -42,6 +42,7 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 			}
 		}
 		
+				
 		bodyPos = body.position
 		bodyVelocity = body.velocity
 		newVelocity = new Vector(0,0)
@@ -69,11 +70,11 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 		}
 		
 		var lineFail = linearProgram2(orcaLines, maxSpeed,prefVelocity , false); 
-		
+
 		if (lineFail < orcaLines.size) {
 			linearProgram3(orcaLines, numObstLines, lineFail, maxSpeed);
 		}
-		
+
 		return newVelocity
 	}
 	
@@ -122,7 +123,7 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 				} else {
 					// Project on legs
 					var leg = Math.sqrt(distSq - combinedRadiusSq) as float
-					
+
 					if(relativePosition.det(w) > 0){
 						var temp = new Vector(relativePosition.x * leg - relativePosition.y * combinedRadius, relativePosition.x * leg + relativePosition.y * combinedRadius)
 						line.direction = temp.divide(distSq)
@@ -184,21 +185,24 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 				if (numerator < 0) {
 					return false;
 				} 
+			 }
+			 else{
+			 	var t = numerator / denominator;
+				 if (denominator >= 0) {
+					// Line i bounds line lineNb on the right
+					tRight = Math.min(tRight, t);
+				 }
+				 else {
+					// Line i bounds line lineNb on the left
+					tLeft = Math.max(tLeft, t);
+				 }
+				
+				 if (tLeft > tRight) {
+					 return false;
+				 }
 			 } 
 			 
-			 var t = numerator / denominator;
-			 if (denominator >= 0) {
-				// Line i bounds line lineNb on the right
-				tRight = Math.min(tRight, t);
-			 }
-			 else {
-				// Line i bounds line lineNb on the left
-				tLeft = Math.max(tLeft, t);
-			 }
-			
-			 if (tLeft > tRight) {
-				 return false;
-			 }
+			 
 		}
 		
 		if (directionOpt) {
@@ -226,7 +230,7 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 				newVelocity = point.plus(direction.prod(t));
 			}
 		}
-		
+
 		return true;
 	}
 	
@@ -246,6 +250,7 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 		for(var i = 0; i < orcaLines.size; i++){
 			var direction = orcaLines.get(i).direction
 			var point = orcaLines.get(i).point
+
 			if(direction.det(point.minus(newVelocity)) > 0){
 				
 				// Result does not satisfy constraint i, compute new optimal result
@@ -261,7 +266,6 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 	}
 	
 	def linearProgram3(orcaLines : List<Line>, numObstLines : int, beginLine : int, radius : float){
-		
 		var distance = 0.0 as float;
 		
 		for (var i = beginLine; i < orcaLines.size(); i++) {
@@ -287,19 +291,22 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 						if (directionI.prod(directionJ) <= 0.0f) {
 							// Line i and line j point in opposite direction
 							line.point = (pointI.plus(pointJ)).prod(0.5 as float)
+							line.direction = (directionJ.minus(directionI)).normalize
+							projLines += line;
 						}
-					} else {
+					}
+					else {
 						var coef = directionJ.det(pointI.minus(pointJ)) / determinant
 						line.point = pointI.plus(directionI.prod(coef))
-						
+						line.direction = (directionJ.minus(directionI)).normalize
+						projLines += line;
 					}
-					line.direction = (directionJ.minus(directionI)).normalize
-					projLines += line; 
+					 
 				}
 				
 				var tempVelocity = newVelocity
 				var vector = new Vector(-directionI.y, directionI.x)
-
+								
 				if (linearProgram2(projLines, radius, vector, true) < projLines.size) {
 					newVelocity = tempVelocity
 				}

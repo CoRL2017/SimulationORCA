@@ -67,7 +67,6 @@ agent Environment{
 	}
 	
 	on SimulationStepEvent{
-		println("in SimulationStepEvent")
 				
 		for (body : hashAgentBodies.values()) {
 		 	//use the skill computePerception
@@ -80,11 +79,9 @@ agent Environment{
 	
 	on EndOfStepEvent{
 		fireStepEvent.set(false)
-	
-		println("in EndOfStepEvent")
 		
 		TimeManager.incrementTime
-		println("time = " + TimeManager.time)
+		//println("time = " + TimeManager.time)
 		//use skill ResolveConflictSkill
 		resolveConflict(receivedInfluences, hashAgentBodies)
 		receivedInfluences.clear
@@ -101,7 +98,6 @@ agent Environment{
 	
 
 	on InfluenceEvent{
-		println("in InfuenceReceivedEvent")
 		receivedInfluences += occurrence
 		if (receivedInfluences.size >= hashAgentBodies.size) {
 			//pour enlever le pb de pls executions en mm temps

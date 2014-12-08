@@ -26,7 +26,6 @@ agent Pedestrian {
 	}
 	
 	on PerceptionEvent{
-		println("in PerceptionReceivedEvent")
 		
 		// Compute next move using ORCA algorithm
 		var movement : Vector = nextMove(occurrence.perceptions, occurrence.body)

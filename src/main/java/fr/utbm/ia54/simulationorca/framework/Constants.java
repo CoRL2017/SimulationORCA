@@ -18,7 +18,7 @@ public final class Constants {
 	public static final float TIME_HORIZON = 5; // --c++ 5
 	public static final float TIME_STEP = (float) 0.25; // millisecond  --c++ 0.25
 	public static final float MAX_SPEED = (float) 2; // --c++ 2
-	public static final float PRECEPTION_DISTANCE = 50;
+	public static final float PRECEPTION_DISTANCE = 100;
 	public static final float EPSILON = (float) 0.00001;
 	public static final float ERROR = (float) 2;
 	
@@ -30,7 +30,7 @@ public final class Constants {
 	
 		Specify the default parameters for agents that are subsequently added. 
 		//(float neighborDist, size_t maxNeighbors, float timeHorizon, float timeHorizonObst, float radius, float maxSpeed, const Vector2 &velocity)
-		sim->setAgentDefaults(15.0f, 10, 5.0f, 5.0f, 2.0f, 2.0f);
+		sim->setAgentDefaults(15.0f, 10, 5.0f, 5.0f, 2.0f, 2.0f,new Vector(0,0));
 		
 	*/
 
