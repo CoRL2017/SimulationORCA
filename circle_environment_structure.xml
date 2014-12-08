@@ -1,0 +1,24 @@
+<environment>
+	<pedestrians>
+		<pedestrian>800,375,320,615</pedestrian>
+		<pedestrian>698,600,201,399</pedestrian>
+		<pedestrian>462,673,285,166</pedestrian>
+		<pedestrian>251,543,515,75</pedestrian>
+		<pedestrian>210,299,735,188</pedestrian>
+		<pedestrian>366,107,795,428</pedestrian>
+		<pedestrian>613,97,655,632</pedestrian>
+		<pedestrian>783,276,410,661</pedestrian>
+		<pedestrian>761,522,226,496</pedestrian>
+		<pedestrian>562,669,228,249</pedestrian>
+		<pedestrian>320,615,800,375</pedestrian>
+		<pedestrian>201,399,698,600</pedestrian>
+		<pedestrian>285,166,462,673</pedestrian>
+		<pedestrian>515,75,251,543</pedestrian>
+		<pedestrian>735,188,210,299</pedestrian>
+		<pedestrian>795,428,366,107</pedestrian>
+		<pedestrian>655,632,613,97</pedestrian>
+		<pedestrian>410,661,783,276</pedestrian>
+		<pedestrian>226,496,761,522</pedestrian>
+		<pedestrian>228,249,562,669</pedestrian>
+	</pedestrians>
+</environment>

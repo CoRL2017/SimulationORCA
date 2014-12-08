@@ -98,7 +98,7 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 			var relativePosition = neighbour.position.minus(bodyPos)
 			var relativeVelocity = neighbour.velocity.minus(bodyVelocity)
 			var distSq = relativePosition.absSq()
-			var combinedRadius = Constants.PEDSTRIAN_CIRCLE_DIAMETER //"the radius of the circular constraint" XXX check if correct
+			var combinedRadius = Constants.COMBINED_RADIUS //"the radius of the circular constraint" XXX check if correct
 			var combinedRadiusSq = Math.pow(combinedRadius, 2)
 			
 			var line = new Line

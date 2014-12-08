@@ -21,6 +21,7 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 
 	@SuppressWarnings("unused")
 	private final Set<Obstacle> obstacles;
+	@SuppressWarnings("unused")
 	private final Set<Vector> pedestrianObjectives;
 	private Set<AgentBody> pedestrianBodies = new HashSet<AgentBody>();
 
@@ -53,15 +54,33 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 						List<Vector> segments = obs.getSegments();
 						for (int i = 0; i < segments.size(); i++) {
 							if (i < segments.size() - 1) {
-								graphics.drawLine((int) segments.get(i).getX(),
-										(int) segments.get(i).getY(),
-										(int) segments.get(i + 1).getX(),
-										(int) segments.get(i + 1).getY());
+								graphics.drawLine(
+										(int) segments.get(i).getX()
+												* this.getWidth()
+												/ Constants.WORLD_WIDTH,
+										(int) segments.get(i).getY()
+												* this.getHeight()
+												/ Constants.WORLD_HEIGHT,
+										(int) segments.get(i + 1).getX()
+												* this.getWidth()
+												/ Constants.WORLD_WIDTH,
+										(int) segments.get(i + 1).getY()
+												* this.getHeight()
+												/ Constants.WORLD_HEIGHT);
 							} else {
-								graphics.drawLine((int) segments.get(i).getX(),
-										(int) segments.get(i).getY(),
-										(int) segments.get(0).getX(),
-										(int) segments.get(0).getY());
+								graphics.drawLine(
+										(int) segments.get(i).getX()
+												* this.getWidth()
+												/ Constants.WORLD_WIDTH,
+										(int) segments.get(i).getY()
+												* this.getHeight()
+												/ Constants.WORLD_HEIGHT,
+										(int) segments.get(0).getX()
+												* this.getWidth()
+												/ Constants.WORLD_WIDTH,
+										(int) segments.get(0).getY()
+												* this.getHeight()
+												/ Constants.WORLD_HEIGHT);
 							}
 
 						}
@@ -76,8 +95,13 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 				if (pedestrianBodies != null) {
 					for (AgentBody body : pedestrianBodies) {
 						graphics.setColor(Color.cyan);
-						graphics.drawOval((int) body.getPosition().getX(),
-								(int) body.getPosition().getY(),
+						graphics.drawOval(
+								(int) body.getPosition().getX()
+										* this.getWidth()
+										/ Constants.WORLD_WIDTH,
+								(int) body.getPosition().getY()
+										* this.getHeight()
+										/ Constants.WORLD_HEIGHT,
 								(int) Constants.PEDSTRIAN_CIRCLE_DIAMETER,
 								(int) Constants.PEDSTRIAN_CIRCLE_DIAMETER);
 					}
@@ -89,8 +113,11 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 				if (pedestrianObjectives != null) {
 					for (Vector position : pedestrianObjectives) {
 						graphics.setColor(Color.orange);
-						graphics.drawOval((int) position.getX(),
-								(int) position.getY(),
+						graphics.drawOval(
+								(int) position.getX() * this.getWidth()
+										/ Constants.WORLD_WIDTH,
+								(int) position.getY() * this.getHeight()
+										/ Constants.WORLD_HEIGHT,
 								(int) Constants.PEDSTRIAN_CIRCLE_DIAMETER,
 								(int) Constants.PEDSTRIAN_CIRCLE_DIAMETER);
 					}
