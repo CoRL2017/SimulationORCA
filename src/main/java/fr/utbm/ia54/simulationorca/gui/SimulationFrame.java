@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody;
 import fr.utbm.ia54.simulationorca.environmentmodel.Obstacle;
 import fr.utbm.ia54.simulationorca.framework.Constants;
+import fr.utbm.ia54.simulationorca.framework.Segment;
 import fr.utbm.ia54.simulationorca.framework.Vector;
 
 public class SimulationFrame extends JFrame implements EnvironmentListener {
@@ -51,34 +52,36 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 				if (obstacles != null) {
 					for (Obstacle obs : obstacles) {
 						graphics.setColor(Color.white);
-						List<Vector> segments = obs.getSegments();
+						List<Segment> segments = obs.getSegments();
 						for (int i = 0; i < segments.size(); i++) {
 							if (i < segments.size() - 1) {
-								graphics.drawLine(
-										(int) segments.get(i).getX()
+								graphics.drawLine((int) segments.get(i)
+										.getPoint().getX()
+										* this.getWidth()
+										/ Constants.WORLD_WIDTH, (int) segments
+										.get(i).getPoint().getY()
+										* this.getHeight()
+										/ Constants.WORLD_HEIGHT,
+										(int) segments.get(i + 1).getPoint()
+												.getX()
 												* this.getWidth()
 												/ Constants.WORLD_WIDTH,
-										(int) segments.get(i).getY()
-												* this.getHeight()
-												/ Constants.WORLD_HEIGHT,
-										(int) segments.get(i + 1).getX()
-												* this.getWidth()
-												/ Constants.WORLD_WIDTH,
-										(int) segments.get(i + 1).getY()
+										(int) segments.get(i + 1).getPoint()
+												.getY()
 												* this.getHeight()
 												/ Constants.WORLD_HEIGHT);
 							} else {
-								graphics.drawLine(
-										(int) segments.get(i).getX()
+								graphics.drawLine((int) segments.get(i)
+										.getPoint().getX()
+										* this.getWidth()
+										/ Constants.WORLD_WIDTH, (int) segments
+										.get(i).getPoint().getY()
+										* this.getHeight()
+										/ Constants.WORLD_HEIGHT,
+										(int) segments.get(0).getPoint().getX()
 												* this.getWidth()
 												/ Constants.WORLD_WIDTH,
-										(int) segments.get(i).getY()
-												* this.getHeight()
-												/ Constants.WORLD_HEIGHT,
-										(int) segments.get(0).getX()
-												* this.getWidth()
-												/ Constants.WORLD_WIDTH,
-										(int) segments.get(0).getY()
+										(int) segments.get(0).getPoint().getY()
 												* this.getHeight()
 												/ Constants.WORLD_HEIGHT);
 							}

@@ -32,6 +32,10 @@ public class Vector {
 		return new Vector(x - b.x, y - b.y);
 	}
 
+	public Vector minus(float f) {
+		return new Vector(x - f, y - f);
+	}
+
 	public Vector plus(Vector b) {
 		return new Vector(x + b.x, y + b.y);
 	}

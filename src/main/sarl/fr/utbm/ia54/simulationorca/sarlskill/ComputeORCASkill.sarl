@@ -80,9 +80,227 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 	
 	def orcaLinesForObstacles(obstacles : List<Obstacle>) : ArrayList<Line>{
 		var orcaLines = new ArrayList<Line>
+		var invTimeHorizonObst = 1/Constants.TIME_HORIZON_OBST // XXX check what that variable stands for ! seems like a key point
+		var radius = Constants.COMBINED_RADIUS/2
 		
 		for (obstacle : obstacles){
-			//TODO Obstacles avoidance
+			for (segment : obstacle.getSegments){
+				var segment2 = obstacle.next(segment)
+				var relativePosition1 = segment.point.minus(bodyPos)
+				var relativePosition2 = segment2.point.minus(bodyPos)
+				// double check avec des bon vieux indices
+				
+				var alreadyCovered = false
+				// Check if velocity obstacle of obstacle is already taken care of by
+			 	// previously constructed obstacle ORCA lines 	
+			 	for(line : orcaLines){
+			 		var temp1 = ((relativePosition1.prod(invTimeHorizonObst)).minus(line.point)).det(line.direction)
+			 		var temp2 = ((relativePosition2.prod(invTimeHorizonObst)).minus(line.point)).det(line.direction)
+			 		if(temp1 - invTimeHorizonObst * radius < -Constants.EPSILON || temp2 - invTimeHorizonObst * radius < -Constants.EPSILON){
+			 			alreadyCovered = true
+			 			// XXX continue
+					}
+			 	}
+			 	if(!alreadyCovered){
+		 			// Not yet covered
+		 			// Check for collisions
+		 			
+		 			var distSq1 = relativePosition1.absSq
+		 			var distSq2 = relativePosition2.absSq
+		 			var radiusSq = Math.sqrt(radius)			 			
+		 			var obstacleVector = segment2.point.minus(segment.point)
+		 			var s = (relativePosition1.prod(-1)).prod(obstacleVector) / obstacleVector.absSq
+		 			var distSqLine = ((relativePosition1.prod(-1)).minus(s)).prod(obstacleVector)
+			 		
+			 		var line = new Line
+			 		
+			 		if(s < 0 && distSq1 <= radiusSq){
+			 			// Collision with left vertex
+			 			// Ignore if non vertex
+			 			if(segment.isConvex){
+				 			line.point = new Vector(0,0)
+				 			line.direction = new Vector(-relativePosition1.getY(), relativePosition1.getX())
+				 			orcaLines.add(line)
+			 			}
+			 			// XXX cpp continue
+			 		} else if (s > 1 && distSq2 <= radiusSq) {
+			 			// Collision with right vertex
+			 			// Ignore if non-convex or if it will be taken care of by neighboring obstacle
+			 			// XXX initialiser correctement unitDir dans Segment
+			 			if(segment2.isConvex && relativePosition2.det(segment2.unitDir) >= 0){
+			 				line.point = new Vector(0,0)
+				 			line.direction = new Vector(-relativePosition2.getY(), relativePosition2.getX())
+				 			orcaLines.add(line)
+				 		}
+				 		// XXX cpp continue
+			 		} else if(s >= 0 && s < 1 && distSqLine <= radiusSq){
+			 			// Collision with obstacle segment 
+			 			line.point = new Vector(0,0)
+			 			line.direction = segment.unitDir.prod(-1)
+			 			orcaLines.add(line)
+			 			// XXX cpp continue
+			 		}
+			 		
+			 		// No collision, compute legs
+			 		// When obliquely viewed, both legs can come from a single vertex 
+			 		// Legs extend cutoff line when non convex vertex
+			 		var leftLegDirection : Vector
+			 		var rightLegDirection : Vector
+			 		
+			 		if(s < 0 && distSqLine <= radiusSq){
+			 			// Obstacle viewed obliquely so that left vertex defines velocity obstacle
+			 			if(!segment.isConvex){
+			 				// XXX cpp continue
+			 			}
+			 			segment2 = segment
+			 			var leg1 = Math.sqrt(distSq1 - radiusSq) as float
+			 			rightLegDirection = new Vector(relativePosition1.x * leg1 - relativePosition1.y * radius, relativePosition1.x * radius + relativePosition1.y * leg1)
+			 			rightLegDirection = rightLegDirection.divide(distSq1)
+			 			leftLegDirection = new Vector(relativePosition1.x * leg1 + relativePosition1.y * radius, -relativePosition1.x * radius + relativePosition1.y * leg1)
+			 			leftLegDirection = leftLegDirection.divide(distSq1)
+			 		} else if (s > 1 && distSqLine <= radiusSq){
+			 			// Obstacle viewed obliquely so that right vertex defines velocity obstacle
+			 			if(!segment.isConvex){
+			 				var leg2 = Math.sqrt(distSq2 - radiusSq) as float
+			 				rightLegDirection = new Vector(relativePosition2.x * leg2 - relativePosition2.y * radius, relativePosition2.x * radius + relativePosition2.y * leg2)
+				 			rightLegDirection = rightLegDirection.divide(distSq2)
+				 			leftLegDirection = new Vector(relativePosition2.x * leg2 + relativePosition2.y * radius, -relativePosition2.x * radius + relativePosition2.y * leg2)
+				 			leftLegDirection = leftLegDirection.divide(distSq2)
+			 			}
+			 		} else {
+			 			//Usual situation
+			 			if(segment.isConvex){
+			 				var leg1 = Math.sqrt(distSq1 - radiusSq) as float
+			 				leftLegDirection =  new Vector(relativePosition1.x * leg1 - relativePosition1.y * radius, relativePosition1.x* radius + relativePosition1.y * leg1) 
+			 				leftLegDirection = leftLegDirection.divide(distSq1)
+			 			} else {
+			 				// left vertex non convex left leg extends cutoff line
+			 				leftLegDirection = segment.unitDir.prod(-1)
+			 			}
+			 			if(segment2.isConvex){
+			 				var leg2 = Math.sqrt(distSq2 - radiusSq) as float
+			 				rightLegDirection =  new Vector(relativePosition2.x * leg2 - relativePosition2.y * radius, relativePosition2.x* radius + relativePosition2.y * leg2) 
+			 				rightLegDirection = rightLegDirection.divide(distSq2)
+			 			} else {
+			 				// left vertex non convex left leg extends cutoff line
+			 				rightLegDirection = segment.unitDir
+			 			}
+			 		}
+			 		
+			 		// Legs can never point into neighboring edge when convex vertex,
+			 		// take cutoff-line of neighboring edge instead. If velocity projected on
+			 		// "foreign" leg, no constraint is added.
+			 		
+			 		var leftNeighbor = obstacle.previous(segment)
+			 		var isLeftLegForeign = false
+			 		var isRightLegForeign = false
+			 		
+			 		if(segment.isConvex && leftLegDirection.det(leftNeighbor.unitDir.prod(-1)) >= 0){
+			 			// Left leg points into obstacle
+			 			leftLegDirection = leftNeighbor.unitDir.prod(-1)
+			 			isLeftLegForeign = true			 			
+			 		}
+			 		
+			 		if(segment2.isConvex && rightLegDirection.det(segment2.unitDir) <= 0){
+			 			// Left leg points into obstacle
+			 			rightLegDirection = segment2.unitDir
+			 			isRightLegForeign = true			 			
+			 		}
+			 		
+			 		// Compute cut off center
+			 		var leftCutoff = (segment.point.minus(bodyPos)).prod(invTimeHorizonObst) 
+			 		var rightCutoff = (segment2.point.minus(bodyPos)).prod(invTimeHorizonObst) 
+			 		var cutoffVec = rightCutoff.minus(leftCutoff)
+			 		
+			 		//Project current velocity on velocity obstacle
+			 		
+			 		//Check if current velocity is projected on cutoff circles
+			 		var t : float
+			 		if(segment == segment2){
+			 			t = 0.5 as float
+			 		} else {
+			 			t = ((bodyVelocity.minus(leftCutoff)).prod(cutoffVec) / cutoffVec.absSq)
+			 		} 
+			 		var tLeft = (bodyVelocity.minus(leftCutoff)).prod(leftLegDirection)
+			 		var tRight = (bodyVelocity.minus(rightCutoff)).prod(rightLegDirection)	
+			 		
+			 		if((t < 0 && tLeft < 0) || (segment == segment2 && tLeft < 0 && tRight < 0)){
+			 			// Project on left cutoff circle
+			 			var unitW = (bodyVelocity.minus(leftCutoff)).normalize
+			 			
+			 			line.direction = new Vector(unitW.y, -unitW.x)
+			 			line.point = leftCutoff.plus((unitW).prod(radius * invTimeHorizonObst))
+			 			// XXX pas sûr : cpp line.point = leftCutoff + radius_ * invTimeHorizonObst * unitW;
+			 			orcaLines.add(line)
+			 			// XXX cpp continue
+			 		} else if (t > 1 && tRight < 0){
+			 			// Project on right cutoff circle
+			 			var unitW = (bodyVelocity.minus(rightCutoff)).normalize
+			 			
+			 			line.direction = new Vector(unitW.y, -unitW.x)
+			 			line.point = rightCutoff.plus((unitW).prod(radius * invTimeHorizonObst))
+			 			// XXX pas sûr : cpp line.point = rightCutoff + radius_ * invTimeHorizonObst * unitW;
+			 			orcaLines.add(line)
+			 			// XXX cpp continue
+			 		}
+			 		
+			 		var distSqCutoff : float
+			 		var distSqLeft : float
+			 		var distSqRight : float
+			 		
+			 		//Project on left leg, right leg or cut off line, whichever is closest to velocity
+			 		if(t < 0 || t > 1 || segment == segment2){
+			 			// XXX cpp distSqCutoff = std::numeric_limits<float>::infinity()
+			 		} else {
+			 			distSqCutoff = (bodyVelocity.minus((leftCutoff.plus(t)).prod(cutoffVec))).absSq
+			 		}
+			 		if(tLeft < 0){
+			 			// XXX cpp distSqLeft = std::numeric_limits<float>::infinity()
+			 		} else {
+			 			distSqLeft = (bodyVelocity.minus((leftCutoff.plus(tLeft)).prod(leftLegDirection))).absSq
+			 		}
+			 		if(tRight < 0){
+			 			// XXX cpp distSqRight = std::numeric_limits<float>::infinity()
+			 		} else {
+			 			distSqRight = (bodyVelocity.minus((leftCutoff.plus(tRight)).prod(rightLegDirection))).absSq
+			 		}
+			 		
+			 		if(distSqCutoff <= distSqLeft && distSqCutoff <= distSqRight){
+			 			//Project on cutoff line
+			 			line.direction = segment.unitDir.prod(-1)
+			 			line.point = leftCutoff.plus(new Vector(-line.direction.y, line.direction.x).prod(radius*invTimeHorizonObst))
+			 			orcaLines.add(line)
+			 			// XXX cpp continue
+			 		} else if(distSqLeft <= distSqRight){
+			 			//Project on left leg
+			 			if(isLeftLegForeign){
+			 				// XXX cpp continue
+			 			}
+			 			
+			 			line.direction = leftLegDirection
+			 			line.point = leftCutoff.plus(new Vector(-line.direction.y, line.direction.x).prod(radius * invTimeHorizonObst))
+			 			orcaLines.add(line)
+			 			// XXX cpp continue
+			 		} else {
+			 			//Project on right leg
+			 			if(isRightLegForeign){
+			 				// XXX cpp continue
+			 			}
+			 			
+			 			line.direction = rightLegDirection.prod(-1)
+			 			line.point = rightCutoff.plus(new Vector(-line.direction.y, line.direction.x).prod(radius * invTimeHorizonObst))
+			 			orcaLines.add(line)
+			 			// XXX cpp continue
+			 		}
+			 		
+			 		return orcaLines
+			 	
+			 	} else {
+			 		// Already covered do nothing
+			 	}
+			 			
+			
+			}
 		}
 		
 		return orcaLines;

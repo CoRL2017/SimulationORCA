@@ -16,13 +16,14 @@ public final class Constants {
 	// Constants relative to the cycle of simulation
 	public static final int TIMEOUT = 1000;
 	public static final float TIME_HORIZON = 5; // --c++ 5
+	public static final float TIME_HORIZON_OBST = 5; // --c++ ?
 	public static final float TIME_STEP = (float) 0.25; // millisecond --c++
 														// 0.25
 	public static final float MAX_SPEED = (float) 2; // --c++ 2
 	public static final float PRECEPTION_DISTANCE = 100;
 	public static final float EPSILON = (float) 0.00001;
 	public static final float ERROR = (float) 2;
-	public static final float COMBINED_RADIUS = 15;
+	public static final float COMBINED_RADIUS = 20;
 
 	/*
 	 * extrait du code c++ initialisation des constantes // Specify the global

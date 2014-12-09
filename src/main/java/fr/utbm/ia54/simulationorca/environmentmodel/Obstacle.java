@@ -2,66 +2,48 @@ package fr.utbm.ia54.simulationorca.environmentmodel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
+import fr.utbm.ia54.simulationorca.framework.Segment;
 import fr.utbm.ia54.simulationorca.framework.Vector;
 
 public final class Obstacle {
 
-	private List<Vector> segments;
+	private List<Segment> segments;
 
-	public Obstacle(List<Vector> l) {
+	public Obstacle(List<Segment> l) {
 		this.segments = l;
 	}
 
 	public Obstacle() {
-		segments = new ArrayList<Vector>();
+		segments = new ArrayList<Segment>();
 	}
 
-	public void addSegment(Vector v) {
+	public void addSegment(Segment v) {
 		segments.add(v);
 	}
 
-	public void removeSegment(Vector v) {
+	public void removeSegment(Segment v) {
 		segments.remove(v);
 	}
 
-	public Vector next(Vector v) {
-		ListIterator<Vector> it = segments.listIterator();
+	public Segment next(Segment v) {
+		int index = segments.indexOf(v);
 
-		while (!it.equals(v)) {
-			it.next();
-		}
-
-		if (it.nextIndex() < segments.size()) {
-			return it.next();
+		if (index + 1 < segments.size()) {
+			return segments.get(index + 1);
 		} else {
 			return segments.get(0);
 		}
 	}
 
-	public Vector previous(Vector v) {
-		ListIterator<Vector> it = segments.listIterator();
+	public Segment previous(Segment v) {
+		int index = segments.indexOf(v);
 
-		while (!it.equals(v)) {
-			it.next();
-		}
-
-		if (it.previousIndex() > -1) {
-			return it.previous();
+		if (index - 1 > 0) {
+			return segments.get(index - 1);
 		} else {
 			return segments.get(segments.size() - 1);
 		}
-	}
-
-	public boolean isConvex(int i) {
-		// TODO is convex
-		return true;
-	}
-
-	public boolean isConvex(Vector seg) {
-		// TODO is convex
-		return true;
 	}
 
 	private static float projectsPointOnLine(float px, float py, float s1x,
@@ -93,26 +75,36 @@ public final class Obstacle {
 		for (int i = 0; i < segments.size(); i++) {
 			if (i < segments.size() - 1) {
 				float ratio = projectsPointOnLine(p.getX(), p.getY(), segments
-						.get(i).getX(), segments.get(i).getY(),
-						segments.get(i + 1).getX(), segments.get(i + 1).getY());
+						.get(i).getPoint().getX(), segments.get(i).getPoint()
+						.getY(), segments.get(i + 1).getPoint().getX(),
+						segments.get(i + 1).getPoint().getY());
 				ratio = clamp(ratio, 0f, 1f);
 				float vx = ratio
-						* (segments.get(i + 1).getX() - segments.get(i).getX());
+						* (segments.get(i + 1).getPoint().getX() - segments
+								.get(i).getPoint().getX());
 				float vy = ratio
-						* (segments.get(i + 1).getY() - segments.get(i).getY());
-				distTemp = Math.abs(segments.get(i).getX() + vx - p.getX())
-						+ Math.abs(segments.get(i).getY() + vy - p.getY());
+						* (segments.get(i + 1).getPoint().getY() - segments
+								.get(i).getPoint().getY());
+				distTemp = Math.abs(segments.get(i).getPoint().getX() + vx
+						- p.getX())
+						+ Math.abs(segments.get(i).getPoint().getY() + vy
+								- p.getY());
 			} else {
 				float ratio = projectsPointOnLine(p.getX(), p.getY(), segments
-						.get(i).getX(), segments.get(i).getY(), segments.get(0)
-						.getX(), segments.get(0).getY());
+						.get(i).getPoint().getX(), segments.get(i).getPoint()
+						.getY(), segments.get(0).getPoint().getX(), segments
+						.get(0).getPoint().getY());
 				ratio = clamp(ratio, 0f, 1f);
 				float vx = ratio
-						* (segments.get(0).getX() - segments.get(i).getX());
+						* (segments.get(0).getPoint().getX() - segments.get(i)
+								.getPoint().getX());
 				float vy = ratio
-						* (segments.get(0).getY() - segments.get(i).getY());
-				distTemp = Math.abs(segments.get(i).getX() + vx - p.getX())
-						+ Math.abs(segments.get(i).getY() + vy - p.getY());
+						* (segments.get(0).getPoint().getY() - segments.get(i)
+								.getPoint().getY());
+				distTemp = Math.abs(segments.get(i).getPoint().getX() + vx
+						- p.getX())
+						+ Math.abs(segments.get(i).getPoint().getY() + vy
+								- p.getY());
 			}
 
 			if (distTemp < dist) {
@@ -122,11 +114,11 @@ public final class Obstacle {
 		return dist;
 	}
 
-	public List<Vector> getSegments() {
+	public List<Segment> getSegments() {
 		return segments;
 	}
 
-	public void setSegments(List<Vector> segments) {
+	public void setSegments(List<Segment> segments) {
 		this.segments = segments;
 	}
 
