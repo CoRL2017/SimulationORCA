@@ -738,8 +738,13 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 			if (directionI.det(pointI.minus(newVelocity)) > distance) {
 				// Result does not satisfy constraint of line i
 				var projLines = new ArrayList<Line>
-				projLines += orcaLines.get(0)
-				projLines += orcaLines.get(numObstLines) //XXX check if equivalent to lines.begin() + static_cast<ptrdiff_t>(numObstLines))
+				//std::vector<Line> projLines(lines.begin(), lines.begin() + static_cast<ptrdiff_t>(numObstLines));
+				// de ce que j'ai compris copie dans projLines les lines d'index 0 à numOstLines-1
+				for(var j = 0; j<numObstLines;j++){
+					projLines+=orcaLines.get(j)
+				}
+				//projLines += orcaLines.get(0)
+				//projLines += orcaLines.get(numObstLines) //XXX check if equivalent to lines.begin() + static_cast<ptrdiff_t>(numObstLines))
 				
 				for (var j = numObstLines; j < i; j++) {
 					var directionJ = orcaLines.get(j).direction

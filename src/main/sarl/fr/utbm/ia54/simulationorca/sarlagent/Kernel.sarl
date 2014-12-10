@@ -17,7 +17,7 @@ agent Kernel {
 	uses Lifecycle, DefaultContextInteractions
 	
 	on Initialize {			
-		var xmlParser : XMLParser = new XMLParser(Constants.XML_STRUCTURE_FILEPATH)
+		var xmlParser : XMLParser = new XMLParser(Constants.XML_STRUCTURE_FILEPATH)	
 		var listPedestrianAddresses = spawnPedestrians(xmlParser.listInitialPositionPedestrians, xmlParser.listFinalPositionPedestrians )
 		var listener : SimulationFrame = new SimulationFrame(new HashSet(xmlParser.listObstacles), new HashSet(xmlParser.listFinalPositionPedestrians))
 		spawn(Environment, #[listPedestrianAddresses, xmlParser.listInitialPositionPedestrians,xmlParser.listFinalPositionPedestrians, xmlParser.listObstacles, listener])

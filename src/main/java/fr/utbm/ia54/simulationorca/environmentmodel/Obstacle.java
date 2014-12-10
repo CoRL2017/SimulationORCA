@@ -113,6 +113,16 @@ public final class Obstacle {
 		}
 		return dist;
 	}
+	
+	public void computeUnitDir(){
+		for(Segment s:getSegments()){
+			Segment s2=next(s);
+			
+			Vector unitDir=(s2.getPoint()).minus(s.getPoint());
+			unitDir=unitDir.normalize();
+			s.setUnitDir(unitDir);
+		}
+	}
 
 	public List<Segment> getSegments() {
 		return segments;
