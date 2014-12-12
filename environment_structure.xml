@@ -13,12 +13,14 @@
 	 PointB y position -->
 
 <environment>
+<!-- mettre l'obstacle dans l'ordre trigonometrique -->
 	<obstacles>
-		<obstacle>200,200,230,230,250,250,270,270</obstacle>
+		<obstacle>205,270,205,150,200,150,200,270</obstacle>
 	</obstacles>
 	<pedestrians>
 		<pedestrian>150,150,300,300</pedestrian>
-		<pedestrian>300,150,150,300</pedestrian>
-		<pedestrian>300,300,150,150</pedestrian> 
+		<pedestrian>300,300,150,150</pedestrian>
+		 <pedestrian>300,150,150,300</pedestrian>
+		
 	</pedestrians>
 </environment>

@@ -54,7 +54,7 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 						graphics.setColor(Color.white);
 						List<Segment> segments = obs.getSegments();
 						for (int i = 0; i < segments.size(); i++) {
-							if (i < segments.size() - 1) {
+							/*if (i < segments.size() - 1) {
 								graphics.drawLine((int) segments.get(i)
 										.getPoint().getX()
 										* this.getWidth()
@@ -84,7 +84,19 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 										(int) segments.get(0).getPoint().getY()
 												* this.getHeight()
 												/ Constants.WORLD_HEIGHT);
+							}*/
+							if (i < segments.size() - 1) {
+								graphics.drawLine((int) segments.get(i).getPoint().getX(),
+										(int) segments.get(i).getPoint().getY(),
+										(int) segments.get(i + 1).getPoint().getX(),
+										(int) segments.get(i + 1).getPoint().getY());
+							} else {
+								graphics.drawLine((int) segments.get(i).getPoint().getX(),
+										(int) segments.get(i).getPoint().getY(),
+										(int) segments.get(0).getPoint().getX(),
+										(int) segments.get(0).getPoint().getY());
 							}
+
 
 						}
 

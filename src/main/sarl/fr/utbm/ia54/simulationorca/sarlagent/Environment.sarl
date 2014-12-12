@@ -71,14 +71,21 @@ agent Environment{
 	}
 	
 	on SimulationStepEvent{
-				
+		 
+		var perceptions = new TreeMap<Address,List<Object>>
 		for (body : hashAgentBodies.values()) {
 		 	//use the skill computePerception
-			var perceptions = computePerception(body.position, hashAgentBodies.values(), listObstacles)
-			emit(new PerceptionEvent(body, perceptions),Scopes.addresses(body.pedestrianAddress))
+			 perceptions.put(body.pedestrianAddress,computePerception(body.position, hashAgentBodies.values(), listObstacles))
+			
 		}
 		
 		fireStepEvent.set(true)
+		
+		for(address:perceptions.keySet){
+			
+			emit(new PerceptionEvent(hashAgentBodies.get(address), perceptions.get(address)),Scopes.addresses(address))
+		}
+		
 	}
 	
 	on EndOfStepEvent{
@@ -101,12 +108,13 @@ agent Environment{
 	}
 	
 
-	on InfluenceEvent{
+	//enter only if fireStepEvent is true to avoid ConcurrentModificationException
+	on InfluenceEvent [fireStepEvent.get]{
+	 	
 		receivedInfluences += occurrence
 		if (receivedInfluences.size >= hashAgentBodies.size) {
-			//pour enlever le pb de pls executions en mm temps
 			wake(new EndOfStepEvent)
-		}	
+		}
 	}
 	
 	def fireUpdateFrame(){
