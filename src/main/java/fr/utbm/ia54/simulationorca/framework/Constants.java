@@ -23,7 +23,7 @@ public final class Constants {
 	public static final float PRECEPTION_DISTANCE = 100;
 	public static final float EPSILON = (float) 0.00001;
 	public static final float ERROR = (float) 2;
-	public static final float COMBINED_RADIUS = 20;
+	public static final float RADIUS = 10;
 
 	/*
 	 * extrait du code c++ initialisation des constantes // Specify the global
