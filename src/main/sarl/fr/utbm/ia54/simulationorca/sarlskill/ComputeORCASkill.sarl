@@ -15,7 +15,7 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 	var bodyPos : Vector
 	var bodyVelocity : Vector
 	var finalPos : Vector
-	var newVelocity : Vector
+	var newVelocity : Vector //XXX init ?
 	
 	new (position : Vector, finalPosition : Vector) {
 	    super()
@@ -54,28 +54,34 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 		}
 		var numObstLines = orcaLines.size
 	
-		for(line:orcaLines){
-			//println(line.point.x+" "+line.point.y)
-			//println(line.direction.x+" "+line.direction.y)
-		}
+//		for(line:orcaLines){
+//			println(line.point.x+" "+line.point.y)
+//			println(line.direction.x+" "+line.direction.y)
+//		}
 			
 		if(!neighbours.isEmpty){
 			orcaLines += orcaLinesForNeighbours(orcaLines, neighbours)
 		}
 		
-		var maxSpeed = Constants.MAX_SPEED //XXX what is this thing ...
+		
+		var maxSpeed = Constants.MAX_SPEED
 		
 		var prefVelocity=finalPos.minus(bodyPos)
 		if (prefVelocity.absSq > 1.0f) {
 			prefVelocity = prefVelocity.normalize;
 		}
 		
+		var angle = (Math.random() * 2 * Math.PI) as float
+		var dist = (Math.random() * 0.0001) as float
+		
+		prefVelocity = prefVelocity.plus(new Vector(Math.cos(angle) as float, Math.sin(angle) as float).prod(dist))
+		
 		var lineFail = linearProgram2(orcaLines, maxSpeed,prefVelocity , false);
 
 		if (lineFail < orcaLines.size) {
 			linearProgram3(orcaLines, numObstLines, lineFail, maxSpeed);
 		}
-				
+			
 		return newVelocity
 	}
 	
@@ -88,7 +94,6 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 			if(temp1 - invTimeHorizonObst * radius >= -Constants.EPSILON || temp2 - invTimeHorizonObst * radius >= -Constants.EPSILON){
 			 	return true
 			}
-			
 		}
 		return false;
 	}
@@ -96,11 +101,15 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 	
 	def orcaLinesForObstacles(obstacles : List<Obstacle>) : ArrayList<Line>{
 		var orcaLines = new ArrayList<Line>
-		var invTimeHorizonObst = 1/Constants.TIME_HORIZON_OBST // XXX check what that variable stands for ! seems like a key point
+		var invTimeHorizonObst = 1/Constants.TIME_HORIZON_OBST
 		var radius = Constants.RADIUS
 		
+		var count = 0
 		for (obstacle : obstacles){
-			for (segment : obstacle.getSegments){
+			for (element : obstacle.getSegments){
+				println(count);
+				count++
+				var segment = element
 				var segment2 = obstacle.next(segment)
 				var relativePosition1 = segment.point.minus(bodyPos)
 				var relativePosition2 = segment2.point.minus(bodyPos)
@@ -112,7 +121,7 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 		 			var radiusSq = radius*radius			 			
 		 			var obstacleVector = segment2.point.minus(segment.point)
 		 			var s = (relativePosition1.prod(-1)).prod(obstacleVector) / obstacleVector.absSq
-		 			var distSqLine = ((relativePosition1.prod(-1)).minus(s)).prod(obstacleVector)
+		 			var distSqLine = ((relativePosition1.prod(-1)).minus(obstacleVector.prod(s))).absSq
 			 		
 			 		var line = new Line
 			 		
@@ -170,6 +179,7 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 				 				ignore=true
 				 			}
 				 			else{
+				 				segment = segment2
 				 				var leg2 = Math.sqrt(distSq2 - radiusSq) as float
 				 				leftLegDirection = new Vector(relativePosition2.x * leg2 - relativePosition2.y * radius, relativePosition2.x * radius + relativePosition2.y * leg2)
 					 			leftLegDirection = leftLegDirection.divide(distSq2)
@@ -208,6 +218,7 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 	
 						if(!ignore){
 							var leftNeighbor = obstacle.previous(segment)
+							// XXX Debug log pour voir si le pour est foiré
 					 		var isLeftLegForeign = false
 					 		var isRightLegForeign = false
 					 		
@@ -232,7 +243,7 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 					 		
 					 		//Check if current velocity is projected on cutoff circles
 					 		var t : float
-							if(segment == segment2){
+							if(segment.equals(segment2)){
 					 			t = 0.5 as float
 					 		} 
 					 		else {
@@ -242,13 +253,12 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 					 		var tLeft = (bodyVelocity.minus(leftCutoff)).prod(leftLegDirection)
 					 		var tRight = (bodyVelocity.minus(rightCutoff)).prod(rightLegDirection)	
 					 		
-					 		if((t < 0 && tLeft < 0) || (segment == segment2 && tLeft < 0 && tRight < 0)){
+					 		if((t < 0 && tLeft < 0) || (segment.equals(segment2) && tLeft < 0 && tRight < 0)){
 					 			// Project on left cutoff circle
 					 			var unitW = (bodyVelocity.minus(leftCutoff)).normalize
 					 			
 					 			line.direction = new Vector(unitW.y, -unitW.x)
 					 			line.point = leftCutoff.plus((unitW).prod(radius * invTimeHorizonObst))
-					 			// XXX pas sûr : cpp line.point = leftCutoff + radius_ * invTimeHorizonObst * unitW;
 					 			orcaLines.add(line)
 					 		}
 					 		else if (t > 1 && tRight < 0){
@@ -257,7 +267,6 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 					 			
 					 			line.direction = new Vector(unitW.y, -unitW.x)
 					 			line.point = rightCutoff.plus((unitW).prod(radius * invTimeHorizonObst))
-					 			// XXX pas sûr : cpp line.point = rightCutoff + radius_ * invTimeHorizonObst * unitW;
 					 			orcaLines.add(line)
 			 			
 			 				}
@@ -267,25 +276,22 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 						 		var distSqRight : float
 			 					
 			 					//Project on left leg, right leg or cut off line, whichever is closest to velocity
-						 		if(t < 0 || t > 1 || segment == segment2){
-						 			// XXX cpp distSqCutoff = std::numeric_limits<float>::infinity()
+						 		if(t < 0 || t > 1 || segment.equals(segment2)){
 						 			distSqCutoff=Float.POSITIVE_INFINITY
 						 		}
 						 		else {
-						 			distSqCutoff = (bodyVelocity.minus(leftCutoff.plus(cutoffVec.prod(t)))).absSq //(bodyVelocity.minus((leftCutoff.plus(t)).prod(cutoffVec))).absSq//XXX disagree
+						 			distSqCutoff = (bodyVelocity.minus(leftCutoff.plus(cutoffVec.prod(t)))).absSq
 						 		}
 			 		
 						 		if(tLeft < 0){
-						 			// XXX cpp distSqLeft = std::numeric_limits<float>::infinity()
 						 			distSqLeft=Float.POSITIVE_INFINITY
 						 		} else {
-						 			distSqLeft = (bodyVelocity.minus(leftCutoff.plus(leftLegDirection.prod(tLeft)))).absSq //(bodyVelocity.minus((leftCutoff.plus(tLeft)).prod(leftLegDirection))).absSq //XXX disagree
+						 			distSqLeft = (bodyVelocity.minus(leftCutoff.plus(leftLegDirection.prod(tLeft)))).absSq 
 						 		}
 						 		if(tRight < 0){
-						 			// XXX cpp distSqRight = std::numeric_limits<float>::infinity()
 						 			distSqRight=Float.POSITIVE_INFINITY
 						 		} else {
-						 			distSqRight = (bodyVelocity.minus(rightCutoff.plus(rightLegDirection.prod(tRight)))).absSq//(bodyVelocity.minus((leftCutoff.plus(tRight)).prod(rightLegDirection))).absSq //XXX disagree
+						 			distSqRight = (bodyVelocity.minus(rightCutoff.plus(rightLegDirection.prod(tRight)))).absSq
 						 		}
 			 					
 			 					if(distSqCutoff <= distSqLeft && distSqCutoff <= distSqRight){
@@ -331,18 +337,17 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 	}
 	
 	
-	
 	def orcaLinesForNeighbours(orcaLines : List<Line>, neighbours : List<AgentBody>) : List<Line> {
 		
-		var invTimeHorizon = 1/Constants.TIME_HORIZON // XXX check what that variable stands for ! seems like a key point
+		var invTimeHorizon = 1/Constants.TIME_HORIZON
 		var timeStep = Constants.TIME_STEP
 		
 		for (neighbour : neighbours){
 			
 			var relativePosition = neighbour.position.minus(bodyPos)
-			var relativeVelocity = neighbour.velocity.minus(bodyVelocity)
+			var relativeVelocity = bodyVelocity.minus(neighbour.velocity)
 			var distSq = relativePosition.absSq()
-			var combinedRadius = 2*Constants.RADIUS //"the radius of the circular constraint" XXX check if correct -- RADIUS+ RADIUS neigh
+			var combinedRadius = 2*Constants.RADIUS
 			var combinedRadiusSq = Math.pow(combinedRadius, 2)
 			
 			var line = new Line
@@ -351,7 +356,7 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 			if(distSq > combinedRadiusSq){
 				
 				// No collision
-				var w = relativeVelocity.minus(relativePosition.prod(-invTimeHorizon))
+				var w = relativeVelocity.minus(relativePosition.prod(invTimeHorizon))
 				// Vector from cutoff center to relative velocity
 				var wLengthSq = w.absSq()
 				
@@ -369,11 +374,11 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 					var leg = Math.sqrt(distSq - combinedRadiusSq) as float
 
 					if(relativePosition.det(w) > 0){
-						var temp = new Vector(relativePosition.x * leg - relativePosition.y * combinedRadius, relativePosition.x * leg + relativePosition.y * combinedRadius)
+						var temp = new Vector(relativePosition.x * leg - relativePosition.y * combinedRadius, relativePosition.x * combinedRadius + relativePosition.y * leg)
 						line.direction = temp.divide(distSq)
 					} 
 					else {
-						var temp = new Vector(relativePosition.x * leg + relativePosition.y * combinedRadius, -relativePosition.x * leg + relativePosition.y * combinedRadius)
+						var temp = new Vector(relativePosition.x * leg + relativePosition.y * combinedRadius, -relativePosition.x * combinedRadius + relativePosition.y * leg)
 						temp = temp.prod(-1)
 						line.direction = temp.divide(distSq)
 					}
@@ -387,7 +392,7 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 				var invTimeStep = 1 / timeStep
 				
 				// Vector from cutoff center to relative velocity
-				var w = relativePosition.prod(-invTimeStep)
+				var w = relativeVelocity.minus(relativePosition.prod(invTimeStep))
 				
 				var wLength = w.abs()
 				var unitW = w.divide(wLength)

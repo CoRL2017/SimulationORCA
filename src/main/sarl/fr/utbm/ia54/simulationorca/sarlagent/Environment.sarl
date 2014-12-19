@@ -83,7 +83,7 @@ agent Environment{
 		
 		for(address:perceptions.keySet){
 			
-			emit(new PerceptionEvent(hashAgentBodies.get(address), perceptions.get(address)),Scopes.addresses(address))
+			emit(new PerceptionEvent(hashAgentBodies.get(address), perceptions.get(address)), Scopes.addresses(address))
 		}
 		
 	}

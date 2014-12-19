@@ -79,5 +79,4 @@ public class Vector {
 	public void setY(float yPos) {
 		this.y = yPos;
 	}
-
 }

@@ -113,14 +113,22 @@ public final class Obstacle {
 		}
 		return dist;
 	}
-	
-	public void computeUnitDir(){
-		for(Segment s:getSegments()){
-			Segment s2=next(s);
-			
-			Vector unitDir=(s2.getPoint()).minus(s.getPoint());
-			unitDir=unitDir.normalize();
+
+	public void computeUnitDir() {
+		for (Segment s : getSegments()) {
+			Segment s2 = next(s);
+			Vector unitDir = (s2.getPoint()).minus(s.getPoint());
+			unitDir = unitDir.normalize();
 			s.setUnitDir(unitDir);
+		}
+	}
+
+	public void computeConvexity() {
+		for (Segment s : getSegments()) {
+			Segment next = next(s);
+			Segment prev = previous(s);
+			s.setConvexity((prev.getPoint().minus(next.getPoint())).det(s
+					.getPoint().minus(prev.getPoint())) >= 0);
 		}
 	}
 

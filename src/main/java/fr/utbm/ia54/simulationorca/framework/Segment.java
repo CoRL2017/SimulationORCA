@@ -4,19 +4,19 @@ public class Segment {
 
 	Vector point;
 	Vector unitDir;
+	boolean isConvex;
 
 	public Segment(Vector point, Vector unitDir) {
 		this.point = point;
 		this.unitDir = unitDir;
 	}
 
-	public Segment(Vector point) {
-		this.point = point;
-		this.unitDir = new Vector(1, 1);
+	public void setConvexity(boolean isConvex) {
+		this.isConvex = isConvex;
 	}
 
 	public boolean isConvex() {
-		return true;
+		return isConvex;
 	}
 
 	public Vector getPoint() {
@@ -33,5 +33,10 @@ public class Segment {
 
 	public void setUnitDir(Vector unitDir) {
 		this.unitDir = unitDir;
+	}
+
+	public boolean equals(Segment seg) {
+		return (this.point.equals(seg.point) && this.unitDir
+				.equals(seg.unitDir));
 	}
 }
