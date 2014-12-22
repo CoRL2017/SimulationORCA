@@ -6,6 +6,6 @@ import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody
 
 capacity ComputeNextMoveCapacity {
 	
-	def nextMove( perception : List<Object>, body : AgentBody ) : Vector
+	def nextMove( perception : List<Object>, body : AgentBody) : Vector
 	
 }

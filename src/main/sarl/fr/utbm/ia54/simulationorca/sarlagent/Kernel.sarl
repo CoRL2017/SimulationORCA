@@ -18,18 +18,18 @@ agent Kernel {
 	
 	on Initialize {			
 		var xmlParser : XMLParser = new XMLParser(Constants.XML_STRUCTURE_FILEPATH)	
-		var listPedestrianAddresses = spawnPedestrians(xmlParser.listInitialPositionPedestrians, xmlParser.listFinalPositionPedestrians )
 		var listener : SimulationFrame = new SimulationFrame(new HashSet(xmlParser.listObstacles), new HashSet(xmlParser.listFinalPositionPedestrians))
+		var listPedestrianAddresses = spawnPedestrians(xmlParser.listInitialPositionPedestrians, xmlParser.listFinalPositionPedestrians, listener)
 		spawn(Environment, #[listPedestrianAddresses, xmlParser.listInitialPositionPedestrians,xmlParser.listFinalPositionPedestrians, xmlParser.listObstacles, listener])
 		
 		killMe	
 	}
 	
-	def spawnPedestrians(listInitialPedestrianPositions : List<Vector>, listFinalPedestrianPositions : List<Vector>) : List<Address> {
+	def spawnPedestrians(listInitialPedestrianPositions : List<Vector>, listFinalPedestrianPositions : List<Vector>, listener : SimulationFrame) : List<Address> {
 		var listPedestrianAddresses : List<Address> = new ArrayList<Address>()
 		
 		for (var i=0; i<listInitialPedestrianPositions.size(); i++) {
-			var id = spawn(typeof(Pedestrian), #[listInitialPedestrianPositions.get(i), listFinalPedestrianPositions.get(i)])
+			var id = spawn(typeof(Pedestrian), #[listInitialPedestrianPositions.get(i), listFinalPedestrianPositions.get(i), listener])
 			listPedestrianAddresses.add(defaultSpace.getAddress(id))
 		}
 		

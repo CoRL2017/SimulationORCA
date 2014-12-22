@@ -17,7 +17,9 @@ public final class Constants {
 	public static final int TIMEOUT = 1000;
 	public static final float TIME_HORIZON = 5; // --c++ 5
 	public static final float TIME_HORIZON_OBST = 5; // --c++ ?
-	public static final float TIME_STEP = (float) 0.25; // millisecond --c++
+	// For TIME_STEP = 2 : pedestrian movements remain coherent while speed
+	// increases
+	public static final float TIME_STEP = (float) 2; // millisecond --c++
 														// 0.25
 	public static final float MAX_SPEED = (float) 2; // --c++ 2
 	public static final float PRECEPTION_DISTANCE = 100;

@@ -26,8 +26,8 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 	@SuppressWarnings("unused")
 	private final Set<Vector> pedestrianObjectives;
 	private Set<AgentBody> pedestrianBodies = new HashSet<AgentBody>();
-	@SuppressWarnings("unused")
 	private List<Line> orcaLines;
+	private AgentBody body;
 
 	private JPanel mainPanel;
 
@@ -144,6 +144,24 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 							.println("SimulationFrame - No final position to be drawn");
 				}
 
+				if (orcaLines != null) {
+					for (Line line : orcaLines) {
+						int x = (int) (line.getPoint().getX() + body
+								.getPosition().getX());
+						int y = (int) (line.getPoint().getY() + body
+								.getPosition().getY());
+						graphics.drawLine(x * this.getWidth()
+								/ Constants.WORLD_WIDTH, y * this.getHeight()
+								/ Constants.WORLD_HEIGHT, (int) (100 * line
+								.getDirection().getX() + x)
+								* this.getWidth()
+								/ Constants.WORLD_WIDTH, (int) (100 * line
+								.getDirection().getY() + y)
+								* this.getHeight()
+								/ Constants.WORLD_HEIGHT);
+					}
+				}
+
 			}
 		};
 
@@ -156,6 +174,12 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 	@Override
 	public void updateGraphics(Set<AgentBody> pedestrianBodies) {
 		this.pedestrianBodies = pedestrianBodies;
+		repaint();
+	}
+
+	public void drawORCALines(List<Line> orcaLines, AgentBody body) {
+		this.orcaLines = orcaLines;
+		this.body = body;
 		repaint();
 	}
 

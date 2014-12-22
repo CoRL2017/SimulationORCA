@@ -9,17 +9,24 @@ import fr.utbm.ia54.simulationorca.framework.Line
 import fr.utbm.ia54.simulationorca.sarlcapacity.ComputeNextMoveCapacity
 import fr.utbm.ia54.simulationorca.framework.Vector
 import fr.utbm.ia54.simulationorca.environmentmodel.AgentBody
+import fr.utbm.ia54.simulationorca.gui.SimulationFrame
 
 skill ComputeORCASkill implements ComputeNextMoveCapacity {
 	
 	var bodyPos : Vector
 	var bodyVelocity : Vector
 	var finalPos : Vector
-	var newVelocity : Vector //XXX init ?
+	var newVelocity : Vector
+	var frame : SimulationFrame
 	
-	new (position : Vector, finalPosition : Vector) {
+	new (position : Vector, finalPosition : Vector, frame : SimulationFrame) {
 	    super()
+	    this.frame = frame
 	    finalPos = finalPosition
+	}
+	
+	def getFrame() : SimulationFrame{
+		return frame;
 	}
 	
 	def nextMove (perceptions : List<Object>, body : AgentBody): Vector {
@@ -54,6 +61,8 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 		}
 		var numObstLines = orcaLines.size
 	
+		frame.drawORCALines(orcaLines, body);
+		
 //		for(line:orcaLines){
 //			println(line.point.x+" "+line.point.y)
 //			println(line.direction.x+" "+line.direction.y)
@@ -104,11 +113,8 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 		var invTimeHorizonObst = 1/Constants.TIME_HORIZON_OBST
 		var radius = Constants.RADIUS
 		
-		var count = 0
 		for (obstacle : obstacles){
 			for (element : obstacle.getSegments){
-				println(count);
-				count++
 				var segment = element
 				var segment2 = obstacle.next(segment)
 				var relativePosition1 = segment.point.minus(bodyPos)
@@ -218,7 +224,6 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 	
 						if(!ignore){
 							var leftNeighbor = obstacle.previous(segment)
-							// XXX Debug log pour voir si le pour est foiré
 					 		var isLeftLegForeign = false
 					 		var isRightLegForeign = false
 					 		
@@ -331,7 +336,6 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 			}
 		 //end for
 		}
-		
 		
 		return orcaLines
 	}

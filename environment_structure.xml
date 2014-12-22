@@ -15,12 +15,15 @@
 <environment>
 <!-- mettre l'obstacle dans l'ordre trigonometrique -->
 	<obstacles>
-		<obstacle>100,500,200,100</obstacle>
+		<obstacle>205,270,205,150</obstacle>
+		<obstacle>205,150,200,150</obstacle>
+		<obstacle>200,150,200,270</obstacle>
+		<obstacle>200,270,205,270</obstacle>
 	</obstacles>
 	<pedestrians>
-		<pedestrian>700,700,50,50</pedestrian>
-		<pedestrian>700,710,60,50</pedestrian>
-		 <pedestrian>710,700,50,60</pedestrian>
+		<pedestrian>150,150,300,300</pedestrian>
+		<pedestrian>300,300,150,150</pedestrian>
+		 <pedestrian>300,150,150,300</pedestrian>
 		
 	</pedestrians>
 </environment>

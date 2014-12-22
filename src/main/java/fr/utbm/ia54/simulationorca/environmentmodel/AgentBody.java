@@ -10,8 +10,6 @@ public class AgentBody {
 	private Address pedestrianAddress;
 	private Vector finalPosition;
 
-	
-
 	public AgentBody(Address address) {
 		this.pedestrianAddress = address;
 		this.velocity = new Vector(0, 0);
@@ -23,12 +21,12 @@ public class AgentBody {
 		this.velocity = new Vector(0, 0);
 		this.position = position;
 	}
-	
-	public AgentBody(Address address, Vector position,Vector finalPos) {
+
+	public AgentBody(Address address, Vector position, Vector finalPos) {
 		this.pedestrianAddress = address;
 		this.velocity = new Vector(0, 0);
 		this.position = position;
-		this.finalPosition=finalPos;
+		this.finalPosition = finalPos;
 	}
 
 	public Address getPedestrianAddress() {
@@ -50,7 +48,7 @@ public class AgentBody {
 	public void setVelocity(Vector velocity) {
 		this.velocity = velocity;
 	}
-	
+
 	public Vector getFinalPosition() {
 		return finalPosition;
 	}
