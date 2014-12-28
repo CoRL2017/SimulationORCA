@@ -47,10 +47,10 @@ agent Environment{
 		var skillUpdate = new UpdateEnvironmentSkill()
 		setSkill(UpdateEnvironmentCapacity, skillUpdate)
 				
-		println("in Initialize")
 		listObstacles = occurrence.parameters.get(3) as List<Obstacle>
 		for(obstacle:listObstacles){
 			obstacle.computeUnitDir
+			obstacle.computeConvexity
 		}
 		
 		spawnPedestrianBodies(occurrence.parameters.get(0) as List<Address>,
@@ -88,11 +88,19 @@ agent Environment{
 		
 	}
 	
+	//enter only if fireStepEvent is true to avoid ConcurrentModificationException
+	on InfluenceEvent [fireStepEvent.get]{
+	 	
+		receivedInfluences += occurrence
+		if (receivedInfluences.size >= hashAgentBodies.size) {
+			wake(new EndOfStepEvent)
+		}
+	}
+	
 	on EndOfStepEvent{
 		fireStepEvent.set(false)
 		
 		TimeManager.incrementTime
-		//println("time = " + TimeManager.time)
 		//use skill ResolveConflictSkill
 		resolveConflict(receivedInfluences, hashAgentBodies)
 		receivedInfluences.clear
@@ -106,17 +114,7 @@ agent Environment{
 		}
 			
 	}
-	
-
-	//enter only if fireStepEvent is true to avoid ConcurrentModificationException
-	on InfluenceEvent [fireStepEvent.get]{
-	 	
-		receivedInfluences += occurrence
-		if (receivedInfluences.size >= hashAgentBodies.size) {
-			wake(new EndOfStepEvent)
-		}
-	}
-	
+		
 	def fireUpdateFrame(){
 		for(listener as EnvironmentListener : listListeners){
 			listener.updateGraphics(new HashSet(hashAgentBodies.values()))			

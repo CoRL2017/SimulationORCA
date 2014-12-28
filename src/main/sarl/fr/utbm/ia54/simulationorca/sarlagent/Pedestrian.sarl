@@ -13,15 +13,12 @@ agent Pedestrian {
 
 	uses DefaultContextInteractions,ComputeNextMoveCapacity
 	
-	var initialPosition : Vector
 	var finalPostition : Vector
 	
 	on Initialize {
-		
-		initialPosition = occurrence.parameters.get(0) as Vector
-		finalPostition = occurrence.parameters.get(1) as Vector
+		finalPostition = occurrence.parameters.get(0) as Vector
 
-		var skillORCA = new ComputeORCASkill(initialPosition,finalPostition)
+		var skillORCA = new ComputeORCASkill(finalPostition)
 		setSkill(ComputeNextMoveCapacity,skillORCA)
 	}
 	

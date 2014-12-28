@@ -15,16 +15,15 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 	var bodyPos : Vector
 	var bodyVelocity : Vector
 	var finalPos : Vector
-	var newVelocity : Vector //XXX init ?
+	var newVelocity : Vector 
 	
-	new (position : Vector, finalPosition : Vector) {
+	new (finalPosition : Vector) {
 	    super()
 	    finalPos = finalPosition
 	}
 	
 	def nextMove (perceptions : List<Object>, body : AgentBody): Vector {
 
-//		bodyPos = new Vector( (Math.random()*500 +1) as int,(Math.random()*500 +1) as int)
 		var obstacles = new ArrayList<Obstacle>
 		var neighbours = new ArrayList<AgentBody>
 	
@@ -103,12 +102,9 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 		var orcaLines = new ArrayList<Line>
 		var invTimeHorizonObst = 1/Constants.TIME_HORIZON_OBST
 		var radius = Constants.RADIUS
-		
-		var count = 0
+	
 		for (obstacle : obstacles){
 			for (element : obstacle.getSegments){
-				println(count);
-				count++
 				var segment = element
 				var segment2 = obstacle.next(segment)
 				var relativePosition1 = segment.point.minus(bodyPos)
