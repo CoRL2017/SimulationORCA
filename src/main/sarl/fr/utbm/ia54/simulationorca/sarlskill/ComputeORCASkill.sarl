@@ -53,11 +53,7 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 		}
 		var numObstLines = orcaLines.size
 	
-//		for(line:orcaLines){
-//			println(line.point.x+" "+line.point.y)
-//			println(line.direction.x+" "+line.direction.y)
-//		}
-			
+		
 		if(!neighbours.isEmpty){
 			orcaLines += orcaLinesForNeighbours(orcaLines, neighbours)
 		}
@@ -214,7 +210,7 @@ skill ComputeORCASkill implements ComputeNextMoveCapacity {
 	
 						if(!ignore){
 							var leftNeighbor = obstacle.previous(segment)
-							// XXX Debug log pour voir si le pour est foiré
+
 					 		var isLeftLegForeign = false
 					 		var isRightLegForeign = false
 					 		

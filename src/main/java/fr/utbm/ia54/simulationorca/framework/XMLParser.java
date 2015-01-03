@@ -86,12 +86,6 @@ public class XMLParser {
 								0, 0)));
 					}
 					listObstacles.add(obsTemp);
-
-					// listObstacles.add(new Obstacle(new
-					// Vector(Integer.parseInt(positionValues[0]),
-					// Integer.parseInt(positionValues[1])), new
-					// Vector(Integer.parseInt(positionValues[2]),
-					// Integer.parseInt(positionValues[3]))));
 				}
 			}
 		} catch (IOException e) {

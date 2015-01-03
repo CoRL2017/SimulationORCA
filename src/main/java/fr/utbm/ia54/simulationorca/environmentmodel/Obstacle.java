@@ -129,6 +129,7 @@ public final class Obstacle {
 			Segment prev = previous(s);
 			s.setConvexity((prev.getPoint().minus(next.getPoint())).det(s
 					.getPoint().minus(prev.getPoint())) >= 0);
+		
 		}
 	}
 

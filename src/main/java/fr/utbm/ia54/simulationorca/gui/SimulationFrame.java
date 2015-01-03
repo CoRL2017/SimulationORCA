@@ -87,19 +87,7 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 										(int) segments.get(0).getPoint().getY()
 												* this.getHeight()
 												/ Constants.WORLD_HEIGHT);
-							}/*
-							 * if (i < segments.size() - 1) {
-							 * graphics.drawLine((int)
-							 * segments.get(i).getPoint().getX(), (int)
-							 * segments.get(i).getPoint().getY(), (int)
-							 * segments.get(i + 1).getPoint().getX(), (int)
-							 * segments.get(i + 1).getPoint().getY()); } else {
-							 * graphics.drawLine((int)
-							 * segments.get(i).getPoint().getX(), (int)
-							 * segments.get(i).getPoint().getY(), (int)
-							 * segments.get(0).getPoint().getX(), (int)
-							 * segments.get(0).getPoint().getY()); }
-							 */
+							}
 
 						}
 
@@ -158,14 +146,5 @@ public class SimulationFrame extends JFrame implements EnvironmentListener {
 		this.pedestrianBodies = pedestrianBodies;
 		repaint();
 	}
-
-	// TEST DE LA FRAME
-	// @SuppressWarnings("unused")
-	// public static void main(String[] args){
-	// XMLParser test = new XMLParser(Constants.XML_STRUCTURE_FILEPATH);
-	// test.loadXMLDocument();
-	//
-	// SimulationFrame frame = new SimulationFrame(test.getListObstacles());
-	// }
 
 }

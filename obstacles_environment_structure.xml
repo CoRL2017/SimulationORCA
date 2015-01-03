@@ -14,15 +14,19 @@
 
 <environment>
 	<obstacles>
-		<obstacle>100,500,200,100,300,100,200,500</obstacle>
+		<obstacle>120,200,160,100,200,180</obstacle>
+		<obstacle>50,250,340,300,210,500</obstacle>
+		<obstacle>400,500,600,500,600,700,400,700</obstacle>
+	  <obstacle>600,450,500,450,500,300,600,300</obstacle>
+		
 	</obstacles>
 	<pedestrians>
-		<pedestrian>50,50,700,700</pedestrian>
-		<pedestrian>70,50,700,710</pedestrian>
-		 <pedestrian>50,70,710,700</pedestrian>	
+		<pedestrian>50,50,800,650</pedestrian>
+		<pedestrian>90,50,800,700</pedestrian>
+		 <pedestrian>50,90,850,650</pedestrian>	
 		 
-		 <pedestrian>700,700,50,50</pedestrian>
-		<pedestrian>700,710,70,50</pedestrian>
-		 <pedestrian>710,700,50,70</pedestrian>		
+		 <pedestrian>800,650,50,50</pedestrian>
+		<pedestrian>800,700,90,50</pedestrian>
+		 <pedestrian>850,650,50,90</pedestrian>		
 	</pedestrians>
 </environment>
